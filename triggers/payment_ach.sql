@@ -1,0 +1,8 @@
+CREATE OR REPLACE TRIGGER payment_ach
+    AFTER INSERT ON ach
+    FOR EACH ROW
+    BEGIN
+        INSERT INTO payment_method VALUES(DEFAULT, NULL, NULL, :NEW.id);
+    END;
+
+a
