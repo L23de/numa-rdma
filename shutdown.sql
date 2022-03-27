@@ -1,3 +1,12 @@
+-- Triggers
+DROP TRIGGER amenity_apt;
+DROP TRIGGER amenity_prop;
+
+DROP TRIGGER payment_ach;
+DROP TRIGGER payment_card;
+DROP TRIGGER payment_venmo;
+
+-- Tables
 DROP TABLE lease_payment;
 DROP TABLE amenity_payment;
 
