@@ -99,6 +99,8 @@ def generate():
 	for i in aptDataEach:
 		apts.append(Apartment(i))
 
+	print("Apartment Count: ", len(apts))
+
 
 	# Amenities (Not Mockaroo)
 	propAmenitiesData = ""
