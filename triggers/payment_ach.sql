@@ -5,4 +5,3 @@ CREATE OR REPLACE TRIGGER payment_ach
         INSERT INTO payment_method VALUES(DEFAULT, NULL, NULL, :NEW.id);
     END;
 
-a
