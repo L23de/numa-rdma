@@ -65,7 +65,7 @@ CREATE TABLE ach (
 	acct_num VARCHAR2(17) NOT NULL UNIQUE
 		CHECK (REGEXP_LIKE(acct_num, '\d{17}')),
 	routing_num CHAR(9) NOT NULL
-		CHECK (REGEXP_LIKE(acct_num, '\d{9}')),
+		CHECK (REGEXP_LIKE(routing_num, '\d{9}')),
 	bank_name VARCHAR2(255) NOT NULL,
 	PRIMARY KEY(id)
 );
@@ -164,8 +164,8 @@ CREATE TABLE renter_info (
 	ssn VARCHAR(11)
 		CHECK (REGEXP_LIKE(ssn, '\d{3}-\d{2}-\d{4}')),
 	preferred_payment NUMBER NOT NULL,
-	PRIMARY KEY(id),
-    FOREIGN KEY(id) REFERENCES person(id) ON DELETE CASCADE,
+	PRIMARY KEY(person_id),
+    FOREIGN KEY(person_id) REFERENCES person(id) ON DELETE CASCADE,
 	FOREIGN KEY(preferred_payment) REFERENCES payment_method(id)
 );
 
@@ -198,7 +198,7 @@ CREATE TABLE person_on_lease (
 	active CHAR(1),
 	PRIMARY KEY(lease_id, person_id),
 	FOREIGN KEY(lease_id) REFERENCES lease(id) ON DELETE CASCADE,
-	FOREIGN KEY(person_id) REFERENCES renter_info(id) ON DELETE CASCADE
+	FOREIGN KEY(person_id) REFERENCES renter_info(person_id) ON DELETE CASCADE
 );
 
 
