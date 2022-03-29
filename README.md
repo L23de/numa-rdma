@@ -22,15 +22,15 @@ levels at a fictional company, Northside Uncommons Management of Apartments (NUM
 
 The following schemas were generated using the aid of [Mockaroo](https://www.mockaroo.com/). The cURL command to access the data is also provided. Add `&count=X` to the end of the endpoint to specify # of entries to generate.
 
-- ACH - `https://api.mockaroo.com/api/d8cc21a0?key=0db2b700`
-- Apartment - `https://api.mockaroo.com/api/98cd9330?key=0db2b700`
-- Pay Card - `https://api.mockaroo.com/api/42551840?key=0db2b700`
-- Person - `https://api.mockaroo.com/api/d41211e0?key=0db2b700`
-- Pet - `https://api.mockaroo.com/api/f8298b90?key=0db2b700`
-- Prev Addr - `https://api.mockaroo.com/api/83abf170?key=0db2b700`
-- Property - `https://api.mockaroo.com/api/8ac165c0?k=0db2b700`
-- Renter Info - `https://api.mockaroo.com/api/bce9b270?key=0db2b700`
-- Venmo - `https://api.mockaroo.com/api/5d5a4450?key=0db2b700`
+- ACH - `https://api.mockaroo.com/api/d8cc21a0`
+- Apartment - `https://api.mockaroo.com/api/98cd9330`
+- Pay Card - `https://api.mockaroo.com/api/42551840`
+- Person - `https://api.mockaroo.com/api/d41211e0`
+- Pet - `https://api.mockaroo.com/api/f8298b90`
+- Prev Addr - `https://api.mockaroo.com/api/83abf170`
+- Property - `https://api.mockaroo.com/api/8ac165c0`
+- Renter Info - `https://api.mockaroo.com/api/bce9b270`
+- Venmo - `https://api.mockaroo.com/api/5d5a4450`
 
 ## Dev Notes
 
