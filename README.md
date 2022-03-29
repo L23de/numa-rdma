@@ -20,7 +20,7 @@ levels at a fictional company, Northside Uncommons Management of Apartments (NUM
 
 ## Mock Data
 
-The following schemas were generated using the aid of [Mockaroo](https://www.mockaroo.com/). The cURL command to access the data is also provided. Add `&count=X` to the end of the endpoint to specify # of entries to generate.
+The following schemas were generated using the aid of [Mockaroo](https://www.mockaroo.com/). The cURL command to access the data is also provided. Add parameters `key` and `count` in the URL to specify your API key and # of entries to generate.
 
 - ACH - `https://api.mockaroo.com/api/d8cc21a0`
 - Apartment - `https://api.mockaroo.com/api/98cd9330`
