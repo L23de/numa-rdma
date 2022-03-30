@@ -9,4 +9,4 @@ test:
 
 clean:
 	gradle clean
-
+	rm -rf NUMA.jar

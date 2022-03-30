@@ -14,19 +14,9 @@ plugins {
     id 'eclipse'
 }
 
-// apply plugin: 'java'
-// apply plugin: 'eclipse'
-
-// version = '1.0'
-// sourceCompatibility = 11
-// targetCompatibility = 11
-
-
 jar {
     manifest {
-        attributes(
-                'Main-Class': 'numa.NUMA'
-        )
+        attributes('Main-Class': 'numa.NUMA')
     }
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
