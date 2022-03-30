@@ -99,11 +99,9 @@ def generate():
 	for i in aptDataEach:
 		apts.append(Apartment(i))
 
-	print("Apartment Count: ", len(apts))
-
 
 	# Amenities (Not Mockaroo)
-	propAmenitiesData = ""
+	propAmenitiesData = "id,prop_id,amenity,cost\n"
 	for i in range(1, PROP_COUNT + 1):
 		rint = random.randint(1, len(propAmenityList))
 		amenities = random.sample(propAmenityList, rint)
@@ -117,7 +115,7 @@ def generate():
 			propAmenitiesData += datum + "\n"
 	writeFile("prop_amenity.csv", propAmenitiesData)
 	
-	aptAmenitiesData = ""
+	aptAmenitiesData = "id,prop_id,apt,amenity,cost\n"
 	for apt in apts:
 		rint = random.randint(0, len(aptAmenityList) - 1)
 		amenities = random.sample(aptAmenityList, rint)
@@ -132,47 +130,56 @@ def generate():
 			aptAmenitiesData += datum + "\n"
 	writeFile("apt_amenity.csv", aptAmenitiesData)
 
+	# Avoid going over API rate
+	randomDates = retrieveData("a3526f60", count=PERSON_COUNT * APT_COUNT + LEASE_COUNT)[:-1].split(sep="\n")
+	j = 0
 
 	# Visited
-	visitedData = ""
+	visitedData = "person_id,date_visited,prop_id,apt\n"
 	for i in range(1, PERSON_COUNT + 1):
 		rint = random.randint(0, 3)
 		visitApts: List[Apartment] = random.sample(apts, rint)
 		for apt in visitApts:
-			randomDate = retrieveData("a3526f60", count=1)[:-1]
 			datum = makeString(
 				i,
-				randomDate,
+				randomDates[j],
 				apt.prop_id,
 				apt.apt,
 			)
+			j += 1
 			visitedData += datum + "\n"
 	writeFile("visited.csv", visitedData)
 
 
 	genData("prev_addr.csv", "83abf170", count=int(PERSON_COUNT * 1.25), person_count=PERSON_COUNT)
-	genData("renter_info.csv", "bce9b270", count=int(PERSON_COUNT / 2), person_count=PERSON_COUNT)
 
-	
+	renterInfo = retrieveData("bce9b270", count=int(PERSON_COUNT / 2), person_count=PERSON_COUNT, payment_count=ACH_COUNT + VENMO_COUNT + CARD_COUNT)
+	writeFile("renter_info.csv", renterInfo)
+
+	renters = renterInfo.split(sep="\n")[1:-1]
+	# Just grab the person_id
+	renters = [renter[0] for renter in renters] 
+
+
 	# Lease (Details)
 	random.shuffle(apts)
-	leaseData = ""
+	leaseData = "id,prop_id,apt,start_date,term_length,rent_amount\n"
 	for i in range(1, LEASE_COUNT + 1):
 		apt: Apartment = apts[i]
-		randomDate = retrieveData("a3526f60", count=1)[:-1]
 		datum = makeString(
 			i,
 			apt.prop_id,
 			apt.apt,
-			randomDate,
+			randomDates[j],
 			random.randint(1, 5) * 6,
 			apt.rent
 		)
+		j += 1
 		leaseData += datum + "\n"
 	writeFile('lease.csv', leaseData)
 
-	petLeaseData = ""
-	petLeases = random.sample(list(range(LEASE_COUNT)), PET_COUNT)
+	petLeaseData = "lease_id,pet_id,active\n"
+	petLeases = random.sample(list(range(1, LEASE_COUNT + 1)), PET_COUNT)
 	for i in range(1, PET_COUNT + 1):
 		datum = makeString(
 			petLeases[i - 1],
@@ -182,8 +189,8 @@ def generate():
 		petLeaseData += datum + "\n"
 	writeFile('pet_on_lease.csv', petLeaseData)
 
-	personLeaseData = ""
-	people = random.sample(list(range(PERSON_COUNT)), LEASE_COUNT)
+	personLeaseData = "lease_id,person_id,active\n"
+	people = random.sample(renters, LEASE_COUNT)
 	for i in range(1, LEASE_COUNT + 1):
 		datum = makeString(
 			i,
