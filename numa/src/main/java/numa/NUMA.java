@@ -3,23 +3,39 @@ package numa;
 import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
+
+import io.github.cdimascio.dotenv.Dotenv;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.io.IOException;
 import java.sql.Connection;
-
 public class NUMA {
-	final static String DB_URL = "jdbc:oracle:thin:@edgar1.cse.lehigh.edu:1521:cse241";
+	final static boolean DEV = true;
 
 	public static void main (String[] args) throws IOException {
 		boolean connected = false;
 
+		// Re-prompts whenever user is not connected
 		do {
 			try {
 				Reader input = new Reader();
-				String[] loginInfo = getLogin(input);
+				String[] loginInfo = new String[2];
+				String DB_URL = "";
+				if (DEV) {
+					Dotenv dotenv = Dotenv.load();
+					String USER = dotenv.get("USERNAME");
+					String PASS = dotenv.get("PASSWORD");
+					DB_URL = dotenv.get("DB_URL");
+					loginInfo[0] = USER;
+					loginInfo[1] = PASS;
+				} else {
+					System.out.print("Enter Oracle DB URL: ");
+					DB_URL = input.readLine();
+					loginInfo = getLogin(input);
+				}
 
 				// Try logging in and creating a prepared statement
 				try (
@@ -83,6 +99,7 @@ public class NUMA {
 				catch (SQLException e) {
 					// Specific exception for bad user/pass combo
 					if (e.getErrorCode() == 1017) {
+						System.out.println(e);
 						System.out.println("Login denied. Please try again\n");
 					} else {
 						System.out.println("SQLException: " + e);
