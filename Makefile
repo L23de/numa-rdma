@@ -1,15 +1,24 @@
-# all:
+all: compile archive test
+
+compile:
+	javac numa/*.java
+
+archive:
+	jar cfmv NUMA.jar Manifest.txt numa/*.class
+	rm numa/*.class
+
+test:
+	java -jar NUMA.jar
 
 generate:
 	python mock/generate.py
 	python mock/sqlconvert.py
 	mv *.csv mock
-	mv *.sql mock
+	mv aggregate.sql mock
 
 clean:
-	rm -f */*.class
-	rm -f *.jar
-	rm -f *.csv
+	rm -f numa/*.class
+	rm -f NUMA.jar
 
 clean-all: clean
 	rm -f mock/*.csv 
