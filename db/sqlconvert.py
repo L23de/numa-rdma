@@ -1,5 +1,8 @@
 import re
 
+
+MOCK_DIR = ""
+
 OUT_FILE = 'aggregate.sql'
 TABLES = [
 	'property',
@@ -49,7 +52,7 @@ def csv_to_sql(table: str, csv_data, out_fw):
 def convert():
 	with open(OUT_FILE, mode='a') as out:
 		for table in TABLES:
-			in_file = table + '.csv'
+			in_file = MOCK_DIR + table + '.csv'
 			csv_to_sql(table, in_file, out)
 
 def test():
