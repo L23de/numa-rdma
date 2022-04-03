@@ -3,14 +3,19 @@ package numa;
 import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import numa.Portals.*;
+import numa.Exceptions.*;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 public class NUMA {
 	final static boolean DEV = true;
@@ -20,86 +25,66 @@ public class NUMA {
 
 		// Re-prompts whenever user is not connected
 		do {
-			try {
+			try (
 				Reader input = new Reader();
+			) {
 				String[] loginInfo = new String[2];
-				String DB_URL = "";
+				Dotenv dotenv = Dotenv.load();
+				String DB_URL = dotenv.get("DB_URL");
 				if (DEV) {
-					Dotenv dotenv = Dotenv.load();
 					String USER = dotenv.get("USERNAME");
 					String PASS = dotenv.get("PASSWORD");
-					DB_URL = dotenv.get("DB_URL");
 					loginInfo[0] = USER;
 					loginInfo[1] = PASS;
 				} else {
-					System.out.print("Enter Oracle DB URL: ");
-					DB_URL = input.readLine();
 					loginInfo = getLogin(input);
 				}
 
 				// Try logging in and creating a prepared statement
 				try (
-					Connection conn = DriverManager.getConnection(DB_URL, loginInfo[0], loginInfo[1]); 
-					PreparedStatement query = conn.prepareStatement("select capacity, count(id) as count from takes natural join (select * from section natural join classroom) where year=? and semester=? and course_id=? and sec_id=? group by capacity");
-					Statement getYearOpts = conn.createStatement();
-					) {
+					Connection conn = DriverManager.getConnection(DB_URL, loginInfo[0], loginInfo[1]);
+				) {
 					connected = true;
 					System.out.println("Connected\n");
-					
-					// Fetch all valid year options so it's cached (Year list is small enough)
-					ResultSet yearOptsRes = getYearOpts.executeQuery("select distinct year from section");
-					List<String> yearOpts = new ArrayList<String>();
-					while (yearOptsRes.next()) {
-						yearOpts.add(yearOptsRes.getString(1));
-					}
-					yearOptsRes.close();
 
-					// Verify and get parameters of the query from the user
-					Parameters params = new Parameters();
-
-					// Will refetch parameters if user inputs bad parameters instead of exiting
 					while (true) {
+						System.out.println("============================================");
+						System.out.println("Northside Uncommons Management of Apartments");
+						System.out.println("============================================");
+						System.out.println("Enter 'm' to return here and 'q' to quit the program at any time\n");
+						System.out.println("[1] Resident Portal");
+						System.out.println("[2] Management Portal");
+						System.out.println("[3] Shareholder Disclosures\n");
+
+						System.out.print("Portal #: ");
 						try {
-							params.getParams(conn, input, yearOpts);
-							break;
-						} catch (BadParamException e) {
-							System.out.println(e.getMessage());
+							String portalChoice = input.getMenuLine();
+							System.out.println();
+							
+							switch(portalChoice) {
+							case "1":
+								new ResidentPortal(conn, input);
+								break;
+							case "2":
+								new ManagementPortal(conn, input);
+								break;
+							case "3":
+								new ShareholderPortal(conn, input);
+								break;
+							default:
+								System.out.println("Invalid input, please only enter numbers 1 - 3\n");
+							}
+
 						}
+						catch (MenuException e) {
+							// Do nothing
+						}
+						System.out.println("Returning to the main menu...\n");
 					}
-
-					input.close(); // Close Reader object (No more input is needed)
-
-					query.setInt(1, params.year);
-					query.setString(2, params.sem);
-					query.setInt(3, params.courseId);
-					query.setInt(4, params.secId);
-
-					// Should only have one occurrence
-					ResultSet res = query.executeQuery();
-					int[] capacityCount = new int[2];
-						// capacityCount[0] = Capacity of classroom
-						// capacityCount[1] = Enrollment of section
-					while (res.next()) {
-						capacityCount[0] = res.getInt(1);
-						capacityCount[1] = res.getInt(2);
-					}
-					res.close();
-
-					System.out.printf("Capacity is %d | Enrollment is %d\n", capacityCount[0], capacityCount[1]);
-
-					int difference = capacityCount[0] - capacityCount[1];
-					if (difference == 0) {
-						System.out.printf("There are no open seats\n");
-					} else if (difference > 0) {
-						System.out.printf("There are %d open seat(s)\n", difference);
-					} else {
-						System.out.printf("There are %d students without seats\n", Math.abs(difference));
-					}
-				}
+				} 
 				catch (SQLException e) {
 					// Specific exception for bad user/pass combo
 					if (e.getErrorCode() == 1017) {
-						System.out.println(e);
 						System.out.println("Login denied. Please try again\n");
 					} else {
 						System.out.println("SQLException: " + e);
@@ -107,7 +92,8 @@ public class NUMA {
 				}
 				catch (IOException e) {
 					System.out.println("IOException: " + e);
-				} catch (ExitException e) {
+				} 
+				catch (ExitException e) {
 					System.out.println("\nExiting...");
 				}
 

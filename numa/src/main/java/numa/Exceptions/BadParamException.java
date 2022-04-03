@@ -1,4 +1,4 @@
-package numa;
+package numa.Exceptions;
 
 /**
  * Custom exception for handling erroneous user-inputted parameters
