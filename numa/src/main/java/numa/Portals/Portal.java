@@ -23,6 +23,16 @@ public class Portal {
 				}
 			} finally {}
 		}
+		System.out.println();
 		return choice;
+	}
+
+	/** Performed at the end of a chain of prompt events */
+	public void sessionReset(Reader input) throws IOException, ExitException, MenuException {
+		do {
+			System.out.print("Enter 'm' to return to the main menu or 'q' to quit the program: ");
+			input.getMenuLine();
+			System.out.println("Invalid input. Try again\n");
+		} while (true);
 	}
 }
