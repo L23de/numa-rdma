@@ -37,41 +37,45 @@ public class NUMA {
 					Connection conn = DriverManager.getConnection(DB_URL, loginInfo[0], loginInfo[1]);
 				) {
 					connected = true;
-					System.out.println("Connected\n");
-
-					while (true) {
-						System.out.println("============================================");
-						System.out.println("Northside Uncommons Management of Apartments");
-						System.out.println("============================================");
-						System.out.println("Enter 'm' to return here and 'q' to quit the program at any time\n");
-						System.out.println("[1] Resident Portal");
-						System.out.println("[2] Management Portal");
-						System.out.println("[3] Shareholder Disclosures\n");
-
-						System.out.print("Portal #: ");
+					while (connected) {
 						try {
-							String portalChoice = input.getMenuLine();
-							System.out.println();
-							
-							switch(portalChoice) {
-							case "1":
-								new ResidentPortal(conn, input);
-								break;
-							case "2":
-								new ManagementPortal(conn, input);
-								break;
-							case "3":
-								new ShareholderPortal(conn, input);
-								break;
-							default:
-								System.out.println("Invalid input, please only enter numbers 1 - 3\n");
-							}
+							System.out.println("============================================");
+							System.out.println("Northside Uncommons Management of Apartments");
+							System.out.println("============================================");
+							System.out.println("Enter 'm' to return here and 'q' to quit the program at any time\n");
+							System.out.println("[1] Resident Portal");
+							System.out.println("[2] Management Portal");
+							System.out.println("[3] Shareholder Disclosures\n");
 
+							Boolean portalEntered = false;
+							while (!portalEntered) {
+								System.out.print("Portal #: ");
+								try {
+									String portalChoice = input.getMenuLine();
+									
+									switch(portalChoice) {
+									case "1":
+										new ResidentPortal(conn, input);
+										portalEntered = true;
+										break;
+									case "2":
+										new ManagementPortal(conn, input);
+										portalEntered = true;
+										break;
+									case "3":
+										new ShareholderPortal(conn, input);
+										portalEntered = true;
+										break;
+									default:
+										System.out.println("Invalid input, please only enter numbers 1 - 3\n");
+									} 
+								} finally {}
+							}
+							System.out.println("Returning to the main menu...\n");
 						}
 						catch (MenuException e) {
 							// Do nothing
 						}
-						System.out.println("Returning to the main menu...\n");
 					}
 				} 
 				catch (SQLException e) {

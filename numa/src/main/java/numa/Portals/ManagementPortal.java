@@ -28,6 +28,8 @@ public class ManagementPortal extends Portal {
 			case 3: lease(); break;
 			case 4: visits(); break;
 		}
+		
+		super.sessionReset(input);
 	}
 
 	public Boolean getManagerLogin() {

@@ -19,9 +19,11 @@ public class Reader extends BufferedReader {
 	public String getMenuLine() throws IOException, ExitException, MenuException {
 		String input = super.readLine().toLowerCase();
 		if (input.equals("q") || input.equals("'q'")) {
+			System.out.println();
 			throw new ExitException();
 		}
 		else if (input.equals("m") || input.equals("'m'")) {
+			System.out.println();
 			throw new MenuException();
 		}
 		return input;

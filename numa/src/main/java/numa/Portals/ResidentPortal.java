@@ -13,33 +13,33 @@ import numa.Exceptions.*;
 public class ResidentPortal extends Portal {
 	Reader input;
 	Connection conn;
-	int resId;
+	int resId = -1;
 	
 	public ResidentPortal(Connection conn, Reader input) throws IOException, ExitException, MenuException, SQLException {
 		this.input = input;
 		this.conn = conn;
+		
 		try (
 			PreparedStatement checkResident = conn.prepareStatement("select * from renter_info where person_id = ?");
 		) {
-			System.out.println("---------------");
+			System.out.println("\n---------------");
 			System.out.println("Resident Portal");
 			System.out.println("---------------\n");
 
 			// Get resident ID
-			resId = -1;
 			while (resId == -1) {
 				resId = residentLogin(input);
 			}
 
 			checkResident.setInt(1, resId);
 			ResultSet residentEntry = checkResident.executeQuery();
+
 			if (!residentEntry.next()) {
 				// Result Set is empty
 				System.out.println("Resident " + resId + " is not a current resident. Please talk to NUMA for assistance");
-				throw new MenuException();
+				super.sessionReset(input);
 			}
-
-			// Retrieve resident-relevant data
+			
 			System.out.println("[1] My Info");
 			System.out.println("[2] Make Payment");
 			System.out.println("[3] View Apartment Details");
@@ -70,9 +70,10 @@ public class ResidentPortal extends Portal {
 	}
 
 	/** View person info and add payments */
-	public void resInfo() throws SQLException {
+	public void resInfo() throws SQLException, NumberFormatException, IOException, ExitException, MenuException {
 		try (
 			Statement getInfo = conn.createStatement();
+			Statement getPay = conn.createStatement();
 		) {
 			// resInfo should only have one entry, because of PK constraints and residentLogin() already checks that resId exists in the renter_info table
 			ResultSet resInfo = getInfo.executeQuery(
@@ -91,10 +92,7 @@ public class ResidentPortal extends Portal {
 			// Reformat SSN
 			ssn = "***-**-" + ssn.substring(7);
 
-			// Also show payment info
-
-
-			String output = String.format(
+			String infoOut = String.format(
 				"Hi, %s %s!\n" + 
 				"NUMA Resident ID: %d\n" +
 				"SSN: %s\n" +
@@ -104,7 +102,24 @@ public class ResidentPortal extends Portal {
 				"Credit Score on File: %d\n"
 				, first_name, last_name, resId, ssn, age, phone_number, email, credit_score
 			);
-			System.out.println(output);
+
+			// Also show payment info
+			// ResultSet payInfo = getPay.executeQuery(
+			// 	"select "
+			// );
+
+			String payOut = String.format("");
+
+			System.out.println(infoOut);
+			System.out.println(payOut);
+
+			System.out.print("Do you need to add a new payment? [Y/N]: ");
+			String yn = input.getPrompt();
+
+			switch(yn.toLowerCase()) {
+				case "y": new Payment(conn, input, resId); break;
+				default: return;
+			}
 		}
 
 	}

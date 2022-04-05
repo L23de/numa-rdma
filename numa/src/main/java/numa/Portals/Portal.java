@@ -21,7 +21,9 @@ public class Portal {
 					choice = -1;
 					System.out.println("Please try again");
 				}
-			} finally {}
+			} catch (NumberFormatException e) {
+				
+			}
 		}
 		System.out.println();
 		return choice;

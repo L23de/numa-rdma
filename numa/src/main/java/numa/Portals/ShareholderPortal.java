@@ -22,5 +22,7 @@ public class ShareholderPortal extends Portal {
 			case 2: break;
 			case 3: break;
 		}
+
+		super.sessionReset(input);
 	}
 }

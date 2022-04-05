@@ -32,3 +32,4 @@ DROP TABLE ach;
 DROP TABLE property;
 DROP TABLE person;
 DROP TABLE pet;
+DROP TABLE admin;
