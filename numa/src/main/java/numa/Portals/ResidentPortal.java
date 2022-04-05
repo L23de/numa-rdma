@@ -6,11 +6,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+
+import javax.naming.spi.DirStateFactory.Result;
 
 import numa.Reader;
 import numa.Exceptions.*;
 
 public class ResidentPortal extends Portal {
+	final String BOLD_ON = "\033[1m";
+	final String BOLD_OFF = "\033[0m";
+
 	Reader input;
 	Connection conn;
 	int resId = -1;
@@ -73,7 +79,10 @@ public class ResidentPortal extends Portal {
 	public void resInfo() throws SQLException, NumberFormatException, IOException, ExitException, MenuException {
 		try (
 			Statement getInfo = conn.createStatement();
-			Statement getPay = conn.createStatement();
+			PreparedStatement getVenmo = conn.prepareStatement("select payment_method.id, handle from payment_method join venmo on venmo_id = venmo.id where person_id = ?");
+			PreparedStatement getACH = conn.prepareStatement("select payment_method.id, bank_name, acct_num, routing_num from payment_method join ach on ach_id = ach.id where person_id = ?");
+			PreparedStatement getCard = conn.prepareStatement("select payment_method.id, first_name, last_name, card_num, exp_date, cvv, pin from payment_method join pay_card on card_id = pay_card.id where person_id = ?");
+
 		) {
 			// resInfo should only have one entry, because of PK constraints and residentLogin() already checks that resId exists in the renter_info table
 			ResultSet resInfo = getInfo.executeQuery(
@@ -104,14 +113,63 @@ public class ResidentPortal extends Portal {
 			);
 
 			// Also show payment info
-			// ResultSet payInfo = getPay.executeQuery(
-			// 	"select "
-			// );
+			getVenmo.setInt(1, resId);
+			getACH.setInt(1, resId);
+			getCard.setInt(1, resId);
 
-			String payOut = String.format("");
+			ResultSet venmoInfo = getVenmo.executeQuery();
+			ResultSet achInfo = getACH.executeQuery();
+			ResultSet cardInfo = getCard.executeQuery();
+
+			String venmoOut = "";
+			String achOut = "";
+			String cardOut = "";
+
+			while (venmoInfo.next()) {
+				String handle = venmoInfo.getString("handle");
+				Venmo acc = new Venmo(handle);
+				venmoOut += acc.toString();
+			}
+
+			while (achInfo.next()) {
+				String bank = achInfo.getString("bank_name");
+				String acct = achInfo.getString("acct_num");
+				String rout = achInfo.getString("routing_num");
+				ACH acc = new ACH(acct, rout, bank);
+				achOut += acc.toString();
+			}
+
+			while (cardInfo.next()) {
+				String first = cardInfo.getString("first_name");
+				String last = cardInfo.getString("last_name");
+				String card_num = cardInfo.getString("card_num");
+				String exp = cardInfo.getString("exp_date");
+				String cvv = cardInfo.getString("cvv");
+				String pin = cardInfo.getString("pin");
+
+				Card acc = new Card(first, last, card_num, exp, cvv, pin);
+				cardOut += acc.toString();
+			}
 
 			System.out.println(infoOut);
-			System.out.println(payOut);
+
+			if (venmoOut != "") {
+				System.out.println(BOLD_ON + "Venmo" + BOLD_OFF);
+				System.out.println();
+				System.out.println(venmoOut);
+			}
+
+			if (achOut != "") {
+				System.out.println(BOLD_ON + "Bank ACH Transfers" + BOLD_OFF);
+				System.out.println();
+				System.out.println(achOut);
+			}
+			
+			if (cardOut != "") {
+				System.out.println(BOLD_ON + "Payment Cards" + BOLD_OFF);
+				System.out.println();
+				System.out.println(cardOut);
+			}
 
 			System.out.print("Do you need to add a new payment? [Y/N]: ");
 			String yn = input.getPrompt();

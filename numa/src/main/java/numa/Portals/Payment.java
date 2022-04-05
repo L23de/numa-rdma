@@ -135,3 +135,79 @@ public class Payment {
 		}
 	}
 }
+
+class Venmo {
+	String handle;
+
+	public Venmo(String handle) {
+		this.handle = handle;
+	}
+
+	public String toString() {
+		String out = String.format(
+			"Handle: %s\n",
+			handle
+		);
+		return out;
+	}
+}
+
+class ACH {
+	String acct_num;
+	String rout_num;
+	String bank_name;
+
+	public ACH(String acct_num, String rout_num, String bank_name) {
+		this.acct_num = acct_num;
+		this.rout_num = rout_num;
+		this.bank_name = bank_name;
+	}
+
+	public String toString() {
+		String out = String.format(
+			"Bank Name: %s\n" +
+			"Account Number: %s\n" +
+			"Routing Number: %s\n",
+			bank_name, acct_num, rout_num
+		);
+		return out;
+	}
+}
+
+class Card {
+	String first_name;
+	String last_name;
+	String card_num;
+	String exp_date;
+	String cvv;
+	String pin;
+	Boolean isCredit;
+
+	public Card(String first_name, String last_name, String card_num, String exp_date, String cvv, String pin) {
+		this.first_name = first_name;
+		this.last_name = last_name;
+		this.card_num = card_num;
+		this.exp_date = exp_date;
+		this.cvv = cvv;
+		this.pin = pin;
+
+		isCredit = pin == null ? true : false;
+	}
+
+	public String toString() {
+		String type = isCredit ? "Credit" : "Debit";
+		String out = "";
+		out += String.format(
+			"Type: %s\n" +
+			"Cardholder First Name: %s\n" +
+			"Cardholder Last Name: %s\n" +
+			"Card Number: %s\n" +
+			"Expiration Date (MM/YYYY): %s\n" +
+			"CVV: %s\n",
+			type, first_name, last_name, card_num, exp_date, cvv
+		);
+
+		if (!isCredit) out += String.format("PIN: %s", pin);
+		return out;
+	}
+}
