@@ -33,7 +33,7 @@ public class ResidentPortal extends Portal {
 
 			// Get resident ID
 			while (resId == -1) {
-				resId = residentLogin(input);
+				resId = residentLogin();
 			}
 
 			checkResident.setInt(1, resId);
@@ -61,7 +61,7 @@ public class ResidentPortal extends Portal {
 	}
 
 	/** Check that the resident is in the portal and retrieve all information relevant to the resident or simply store the user ID */ 
-	public int residentLogin(Reader input) throws IOException, ExitException, MenuException {
+	public int residentLogin() throws IOException, ExitException, MenuException {
 		System.out.print("Resident ID: ");
 		try {
 			int resId = input.getMenuInt();
@@ -155,23 +155,17 @@ public class ResidentPortal extends Portal {
 
 			if (venmoOut != "") {
 				System.out.println(BOLD_ON + "Venmo" + BOLD_OFF);
-				System.out.println();
 				System.out.println(venmoOut);
-				System.out.println();
 			}
 
 			if (achOut != "") {
 				System.out.println(BOLD_ON + "Bank ACH Transfers" + BOLD_OFF);
-				System.out.println();
 				System.out.println(achOut);
-				System.out.println();
 			}
 			
 			if (cardOut != "") {
 				System.out.println(BOLD_ON + "Payment Cards" + BOLD_OFF);
-				System.out.println();
 				System.out.println(cardOut);
-				System.out.println();
 			}
 
 			System.out.print("Do you need to add a new payment? [Y/N]: ");

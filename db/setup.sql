@@ -17,7 +17,7 @@ CREATE TABLE person (
 	first_name VARCHAR2(255) NOT NULL,
 	last_name VARCHAR2(255) NOT NULL,
 	age NUMBER(2) NOT NULL,
-	phone_number VARCHAR2(12) NOT NULL 
+	phone_number CHAR(12) NOT NULL 
 		CHECK (REGEXP_LIKE(phone_number, '\d{3}-\d{3}-\d{4}')),
 	email VARCHAR2(255) NOT NULL 
 		CHECK (email LIKE '%@%'),
@@ -46,8 +46,10 @@ CREATE TABLE pay_card (
 	id NUMBER GENERATED ALWAYS AS IDENTITY,
 	first_name VARCHAR2(255) NOT NULL,
 	last_name VARCHAR2(255) NOT NULL,
-	card_num CHAR(19) NOT NULL,
-	exp_date DATE NOT NULL,
+	card_num CHAR(19) NOT NULL
+		CHECK (REGEXP_LIKE(card_num, '\d{19}')),
+	exp_date CHAR(7) NOT NULL
+		CHECK (exp_date LIKE '__/____'),
 	cvv CHAR(3) NOT NULL
 		CHECK (REGEXP_LIKE(cvv, '\d{3}')),
 	pin CHAR(4) DEFAULT NULL

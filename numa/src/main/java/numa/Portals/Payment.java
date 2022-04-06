@@ -1,5 +1,7 @@
 package numa.Portals;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -197,6 +199,7 @@ class Card {
 	public String toString() {
 		String type = isCredit ? "Credit" : "Debit";
 		String out = "";
+
 		out += String.format(
 			"Type: %s\n" +
 			"Cardholder First Name: %s\n" +
