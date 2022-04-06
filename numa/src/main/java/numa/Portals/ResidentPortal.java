@@ -6,9 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
-
-import javax.naming.spi.DirStateFactory.Result;
 
 import numa.Reader;
 import numa.Exceptions.*;
@@ -48,15 +47,13 @@ public class ResidentPortal extends Portal {
 			
 			System.out.println("[1] My Info");
 			System.out.println("[2] Make Payment");
-			System.out.println("[3] View Apartment Details");
-			System.out.println("[4] Modify Lease");
-			int mainChoice = super.portal(input, 4);
+			System.out.println("[3] My Lease Details");
+			int mainChoice = super.portal(input, 3);
 			
 			switch (mainChoice) {
 				case 1: resInfo(); break;
 				case 2: makePayment(); break;
 				case 3: viewAptDetails(); break;
-				case 4: modifyLease(); break;
 			}
 
 			super.sessionReset(input);
@@ -129,6 +126,7 @@ public class ResidentPortal extends Portal {
 				String handle = venmoInfo.getString("handle");
 				Venmo acc = new Venmo(handle);
 				venmoOut += acc.toString();
+				venmoOut += "\n";
 			}
 
 			while (achInfo.next()) {
@@ -137,6 +135,7 @@ public class ResidentPortal extends Portal {
 				String rout = achInfo.getString("routing_num");
 				ACH acc = new ACH(acct, rout, bank);
 				achOut += acc.toString();
+				achOut += "\n";
 			}
 
 			while (cardInfo.next()) {
@@ -149,6 +148,7 @@ public class ResidentPortal extends Portal {
 
 				Card acc = new Card(first, last, card_num, exp, cvv, pin);
 				cardOut += acc.toString();
+				cardOut += "\n";
 			}
 
 			System.out.println(infoOut);
@@ -157,18 +157,21 @@ public class ResidentPortal extends Portal {
 				System.out.println(BOLD_ON + "Venmo" + BOLD_OFF);
 				System.out.println();
 				System.out.println(venmoOut);
+				System.out.println();
 			}
 
 			if (achOut != "") {
 				System.out.println(BOLD_ON + "Bank ACH Transfers" + BOLD_OFF);
 				System.out.println();
 				System.out.println(achOut);
+				System.out.println();
 			}
 			
 			if (cardOut != "") {
 				System.out.println(BOLD_ON + "Payment Cards" + BOLD_OFF);
 				System.out.println();
 				System.out.println(cardOut);
+				System.out.println();
 			}
 
 			System.out.print("Do you need to add a new payment? [Y/N]: ");
@@ -179,7 +182,6 @@ public class ResidentPortal extends Portal {
 				default: return;
 			}
 		}
-
 	}
 
 	/** Show all payments that need to be made and some details */ 
@@ -189,13 +191,63 @@ public class ResidentPortal extends Portal {
 	/** Read only of apartment details */ 
 	public void viewAptDetails() throws SQLException {
 		try (
-			Statement getApt = conn.prepareStatement("");
+			PreparedStatement getApts = conn.prepareStatement(
+				"select prop_id, street_name, apt, city, state, zipcode, start_date, term_length, rent_amount from (person_on_lease join lease on person_on_lease.lease_id = lease.id) join property on prop_id = property.id where person_id = ?"
+			);
+			PreparedStatement getPropAmenities = conn.prepareStatement(
+				"select amenity, cost from prop_amenity where prop_id = ?"
+			);
+			PreparedStatement getAptAmenities = conn.prepareStatement(
+				"select amenity, cost from apt_amenity where prop_id = ? and apt = ?"
+			);
 		) {
 
-		}
-	}
+			getApts.setInt(1, resId);
+			ResultSet leased_apts = getApts.executeQuery();
+			ArrayList<Lease> leased = new ArrayList<Lease>();
+			
+			while (leased_apts.next()) {
+				int prop_id = leased_apts.getInt("prop_id");
+				String street_name = leased_apts.getString("street_name");
+				String apt = leased_apts.getString("apt");
+				String city = leased_apts.getString("city");
+				String state = leased_apts.getString("state");
+				String zip = leased_apts.getString("zipcode");
+				Timestamp start_date = leased_apts.getTimestamp("start_date");
+				int term_length = leased_apts.getInt("term_length");
+				int rent_amount = leased_apts.getInt("rent_amount");
 
-	/** Actions to add/remove person/pet and extend lease */ 
-	public void modifyLease() {
+
+				Lease newLease = new Lease(prop_id, street_name, apt, city, state, zip, start_date, term_length, rent_amount);
+				leased.add(newLease);
+			}
+
+			for (Lease lease : leased) {
+				ArrayList<Amenity> amenities = new ArrayList<Amenity>();
+
+				// Get property amenities
+				getPropAmenities.setInt(1, lease.prop_id);
+				ResultSet propAmen = getPropAmenities.executeQuery();
+
+				// Get apartment amenities
+				getAptAmenities.setInt(1, lease.prop_id);
+				getAptAmenities.setString(2, lease.apt);
+				ResultSet aptAmen = getAptAmenities.executeQuery();
+
+				while (propAmen.next()) {
+					String name = propAmen.getString("amenity");
+					int cost = propAmen.getInt("cost");
+					amenities.add(new Amenity(name, cost));
+				}
+
+				while (aptAmen.next()) {
+					String name = aptAmen.getString("amenity");
+					int cost = aptAmen.getInt("cost");
+					amenities.add(new Amenity(name, cost));
+				}
+
+				System.out.println(lease.toString(amenities));
+			}
+		}
 	}
 }

@@ -12,7 +12,7 @@ public class Payment {
 	Reader input;
 	int resId;
 
-	public Payment(Connection conn, Reader input, int resId) throws NumberFormatException, IOException, ExitException, MenuException {
+	public Payment(Connection conn, Reader input, int resId) throws NumberFormatException, IOException, ExitException, MenuException, SQLException {
 		this.conn = conn;
 		this.input = input;
 		this.resId = resId;
@@ -36,18 +36,18 @@ public class Payment {
 
 		try {
 			switch(choice) {
-				case 1: addACH();
-				case 2:	addCard(false);
-				case 3: addCard(true);
-				case 4: addVenmo();
-				default:
+				case 1: addACH(); break;
+				case 2:	addCard(false); break;
+				case 3: addCard(true); break;
+				case 4: addVenmo(); break;
 			}
+
+			conn.commit();
 		}
 		catch (SQLException e) {
 			System.out.println("Error adding payment: " + e);
 			return;
 		}
-
 		System.out.println("Payment Method Accepted!");
 	}
 

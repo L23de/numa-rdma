@@ -36,6 +36,8 @@ public class NUMA {
 				try (
 					Connection conn = DriverManager.getConnection(DB_URL, loginInfo[0], loginInfo[1]);
 				) {
+					conn.setAutoCommit(false);
+
 					connected = true;
 					while (connected) {
 						try {
@@ -75,6 +77,10 @@ public class NUMA {
 						}
 						catch (MenuException e) {
 							// Do nothing
+						} 
+						catch (SQLException e) {
+							System.out.println("SQL Exception: " + e);
+							System.out.println("Returning to the main menu...\n");
 						}
 					}
 				} 
@@ -83,7 +89,7 @@ public class NUMA {
 					if (e.getErrorCode() == 1017) {
 						System.out.println("Login denied. Please try again\n");
 					} else {
-						System.out.println("SQLException: " + e);
+						System.out.println("Failed to connect to the database. Please try again at a later time");
 					}
 				}
 				catch (IOException e) {
