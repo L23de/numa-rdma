@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import numa.Reader;
 import numa.Exceptions.*;
@@ -51,8 +52,16 @@ public class ManagementPortal extends Portal {
 		try (
 			PreparedStatement checkPIN = conn.prepareStatement("select * from admin where pin = ?");
 		) {
-			System.out.print("Manager PIN: ");
-			int pin = input.getMenuInt();
+			int pin = -1;
+			while (pin == -1) {
+				try {
+					System.out.print("Manager PIN: ");
+					pin = input.getMenuInt();
+				} 
+				catch (NumberFormatException e) {
+					System.out.println("Invalid input. Please try again");
+				}
+			}
 			System.out.println();
 
 			checkPIN.setInt(1, pin);
@@ -60,14 +69,25 @@ public class ManagementPortal extends Portal {
 			if (dbPIN.next()) {
 				return true;
 			}
-			
+
 			System.out.println("Incorrect PIN");
 			return false;
 		}
 	}
 
-	public void properties() {
+	public void properties() throws SQLException {
+		try (
+			Statement getProp = conn.createStatement();
+		) {
+			ResultSet propRes = getProp.executeQuery("select * from property");
+			
 
+			while (propRes.next()) {
+				ArrayList<Lease> props = new ArrayList<Lease>();
+			}
+
+			System.out.println(BOLD_ON + "Properties:" + BOLD_OFF);
+		}
 	}
 
 	public void tenants() {

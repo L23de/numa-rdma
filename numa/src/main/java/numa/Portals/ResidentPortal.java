@@ -125,7 +125,7 @@ public class ResidentPortal extends Portal {
 			while (venmoInfo.next()) {
 				String handle = venmoInfo.getString("handle");
 				Venmo acc = new Venmo(handle);
-				venmoOut += acc.toString();
+				venmoOut += " - " + acc.toString();
 				venmoOut += "\n";
 			}
 
@@ -134,7 +134,7 @@ public class ResidentPortal extends Portal {
 				String acct = achInfo.getString("acct_num");
 				String rout = achInfo.getString("routing_num");
 				ACH acc = new ACH(acct, rout, bank);
-				achOut += acc.toString();
+				achOut += " - " + acc.toString();
 				achOut += "\n";
 			}
 
@@ -147,7 +147,7 @@ public class ResidentPortal extends Portal {
 				String pin = cardInfo.getString("pin");
 
 				Card acc = new Card(first, last, card_num, exp, cvv, pin);
-				cardOut += acc.toString();
+				cardOut += " - " + acc.toString();
 				cardOut += "\n";
 			}
 
@@ -217,7 +217,7 @@ public class ResidentPortal extends Portal {
 			}
 
 			for (Lease lease : leased) {
-				ArrayList<Amenity> amenities = new ArrayList<Amenity>();
+				System.out.println(lease.toString());
 
 				// Get property amenities
 				getPropAmenities.setInt(1, lease.prop_id);
@@ -227,20 +227,28 @@ public class ResidentPortal extends Portal {
 				getAptAmenities.setInt(1, lease.prop_id);
 				getAptAmenities.setString(2, lease.apt);
 				ResultSet aptAmen = getAptAmenities.executeQuery();
+				
+				boolean hasAmenities = true;
+				System.out.println("Amenities:");
 
 				while (propAmen.next()) {
+					hasAmenities = true;
 					String name = propAmen.getString("amenity");
 					int cost = propAmen.getInt("cost");
-					amenities.add(new Amenity(name, cost));
+					Amenity tmp = new Amenity(name, cost);
+					System.out.println("- " + tmp.toString());
 				}
 
 				while (aptAmen.next()) {
+					hasAmenities = true;
 					String name = aptAmen.getString("amenity");
 					int cost = aptAmen.getInt("cost");
-					amenities.add(new Amenity(name, cost));
+					Amenity tmp = new Amenity(name, cost);
+					System.out.println("- " + tmp.toString());
 				}
 
-				System.out.println(lease.toString(amenities));
+				if (!hasAmenities) System.out.println("- None");
+				System.out.println();
 			}
 		}
 	}
