@@ -44,12 +44,13 @@ public class ManagementPortal extends Portal {
 			case 2: people(); break;
 			case 3: lease(); break;
 			case 4: visits(); break;
+			case 5: changePIN(); break;
 		}
 		
 		super.sessionReset(input);
 	}
 
-	public Boolean getManagerLogin() throws SQLException, NumberFormatException, IOException, ExitException, MenuException {
+	private Boolean getManagerLogin() throws SQLException, NumberFormatException, IOException, ExitException, MenuException {
 		try (
 			PreparedStatement checkPIN = conn.prepareStatement("select * from admin where pin = ?");
 		) {
@@ -75,7 +76,7 @@ public class ManagementPortal extends Portal {
 		}
 	}
 
-	public void properties() throws SQLException, NumberFormatException, IOException, ExitException, MenuException {
+	private void properties() throws SQLException, NumberFormatException, IOException, ExitException, MenuException {
 		try (
 			Statement getProp = conn.createStatement();
 		) {
@@ -172,7 +173,7 @@ public class ManagementPortal extends Portal {
 		}
 	}
 
-	public void people() throws NumberFormatException, IOException, ExitException, MenuException, SQLException {
+	private void people() throws NumberFormatException, IOException, ExitException, MenuException, SQLException {
 		System.out.println("Search by:");
 		System.out.println("[1] Name");
 		System.out.println("[2] ID");
@@ -204,11 +205,35 @@ public class ManagementPortal extends Portal {
 		}
 	}
 
-	public void lease() {
+	private void lease() {
 
 	}
 
-	public void visits() {
+	private void visits() {
 		
+	}
+
+	private void changePIN() throws IOException, ExitException, MenuException, SQLException {
+		boolean accepted = false;
+		while (!accepted) {
+			try {
+
+				int pin = input.getMenuInt("New PIN: ");
+				int confirm = input.getMenuInt("Confirm new PIN: ");
+				if (pin == confirm) {
+					accepted = true;
+					try (
+						PreparedStatement update = conn.prepareStatement("update admin set pin = ?");
+						) {
+							update.setInt(1, pin);
+							update.executeQuery();
+						}
+					}
+			} catch (NumberFormatException e) {
+				System.out.println("Invalid input, only numeric values are allowed. Try again");
+			}
+		}
+		System.out.println("PIN Updated");
+		conn.commit();
 	}
 }
