@@ -15,7 +15,7 @@ public class Reader extends BufferedReader {
 		super(new InputStreamReader(System.in));
 	}
 
-	// Used for menu input (Navigating between portals and subportals)
+	/** Used for menu input (Navigating between portals and subportals) */ 
 	public String getMenuLine() throws IOException, ExitException, MenuException {
 		String input = super.readLine().toLowerCase();
 		if (input.equals("q") || input.equals("'q'")) {
@@ -29,9 +29,11 @@ public class Reader extends BufferedReader {
 		return input;
 	}
 
-	// Used for menu input with integer values
-	public int getMenuInt() throws IOException, ExitException, MenuException, NumberFormatException {
+	//** Used for menu input with integer values */
+	public int getMenuInt(String prompt) throws IOException, ExitException, MenuException, NumberFormatException {
+		System.out.print(prompt);
 		String input = this.getMenuLine();
+		System.out.println();
 		try {
 			return Integer.parseInt(input);
 		} catch (NumberFormatException e) {
@@ -39,19 +41,7 @@ public class Reader extends BufferedReader {
 		}
 	}
 
-	// Same as getMenuInt() but allows custom error message
-	public int getMenuInt(String errMsg) throws IOException, ExitException, MenuException {
-		String input = this.getMenuLine();
-		try {
-			return Integer.parseInt(input);
-		} 
-		catch (NumberFormatException e) {
-			System.out.println(errMsg + "\n");
-		}
-		return -1;
-	}
-
-	// Used for non-menu inputs
+	//** Used for non-menu inputs */
 	public String getPrompt() throws IOException, ExitException {
 		String input = super.readLine();
 		if (input.equals("q") || input.equals("'q'")) {
@@ -60,7 +50,7 @@ public class Reader extends BufferedReader {
 		return input;
 	}
 
-	// Used for non-menu inputs that allows validation
+	//** Used for non-menu inputs that allows validation */
 	public String getPrompt(Validate validation) throws IOException, ExitException {
 		while (true) {
 			String input = super.readLine();
@@ -72,6 +62,19 @@ public class Reader extends BufferedReader {
 				return input;
 			}
 			System.out.println(res.errMsg + "\n");
+		}
+	}
+
+	//** Used for multi-action prompts that allow adding to the database */
+	public int getAddPrompt() throws IOException, ExitException, MenuException {
+		String input = this.getMenuLine();
+		if (input.equals("a") || input.equals("'a'")) {
+			return 0;
+		}
+		try {
+			return Integer.parseInt(input);
+		} catch (NumberFormatException e) {
+			throw new NumberFormatException();
 		}
 	}
 }

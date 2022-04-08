@@ -13,9 +13,8 @@ public class Portal {
 	public int portal(Reader input, int maxOpts) throws IOException, ExitException, MenuException {
 		int choice = -1;
 		while (choice == -1) {
-			System.out.print("\nSelect an option [1-" + maxOpts + "]: ");
 			try {
-				choice = input.getMenuInt();
+				choice = input.getMenuInt("Select an option [1-" + maxOpts + "]: ");
 				// Makes sure choice is within bounds
 				if (!(choice >= 1 && choice <= maxOpts)) {
 					choice = -1;

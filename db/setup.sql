@@ -8,7 +8,7 @@ CREATE TABLE property (
 	city VARCHAR2(255) NOT NULL,
 	state CHAR(2) NOT NULL
 		CHECK (state like '__'),
-	zipcode NUMBER(5) NOT NULL,
+	zipcode CHAR(5) NOT NULL,
     PRIMARY KEY(id)
 );
 
@@ -199,7 +199,7 @@ CREATE TABLE pet_on_lease (
 
 CREATE TABLE person_on_lease (
 	lease_id NUMBER,
-	person_id NUMBER,
+	person_id NUMBER UNIQUE, -- Only one person per lease
 	PRIMARY KEY(lease_id, person_id),
 	FOREIGN KEY(lease_id) REFERENCES lease(id) ON DELETE CASCADE,
 	FOREIGN KEY(person_id) REFERENCES renter_info(person_id) ON DELETE CASCADE

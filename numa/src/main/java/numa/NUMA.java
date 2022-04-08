@@ -96,7 +96,7 @@ public class NUMA {
 					System.out.println("IOException: " + e);
 				} 
 				catch (ExitException e) {
-					System.out.println("\nExiting...");
+					System.out.println("Exiting...");
 				}
 
 			} catch (IOException e) {

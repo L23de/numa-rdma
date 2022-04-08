@@ -27,20 +27,21 @@ public class ManagementPortal extends Portal {
 		System.out.println("-----------------\n");
 
 		// Get management login
-		if (!getManagerLogin()) {
-			return;
-		}
+		// if (!getManagerLogin()) {
+		// 	return;
+		// }
 		
 		System.out.println("[1] Properties");
-		System.out.println("[2] Tenants");
+		System.out.println("[2] People");
 		System.out.println("[3] Lease");
 		System.out.println("[4] Visit Registration");
 		System.out.println("[5] Change PIN");
+		System.out.println();
 		int mainChoice = super.portal(input, 5);
 
 		switch (mainChoice) {
 			case 1: properties(); break;
-			case 2: tenants(); break;
+			case 2: people(); break;
 			case 3: lease(); break;
 			case 4: visits(); break;
 		}
@@ -55,8 +56,7 @@ public class ManagementPortal extends Portal {
 			int pin = -1;
 			while (pin == -1) {
 				try {
-					System.out.print("Manager PIN: ");
-					pin = input.getMenuInt();
+					pin = input.getMenuInt("Manager PIN: ");
 				} 
 				catch (NumberFormatException e) {
 					System.out.println("Invalid input. Please try again");
@@ -75,23 +75,133 @@ public class ManagementPortal extends Portal {
 		}
 	}
 
-	public void properties() throws SQLException {
+	public void properties() throws SQLException, NumberFormatException, IOException, ExitException, MenuException {
 		try (
 			Statement getProp = conn.createStatement();
 		) {
 			ResultSet propRes = getProp.executeQuery("select * from property");
-			
-
-			while (propRes.next()) {
-				ArrayList<Lease> props = new ArrayList<Lease>();
-			}
+			ArrayList<Property> props = new ArrayList<Property>();
 
 			System.out.println(BOLD_ON + "Properties:" + BOLD_OFF);
+			int counter = 0;
+
+			while (propRes.next()) {
+				int id = propRes.getInt("id");
+				String street = propRes.getString("street_name");
+				String city = propRes.getString("city");
+				String state = propRes.getString("state");
+				String zip = propRes.getString("zipcode");
+
+				Property tmp = new Property(id, street, city, state, zip);
+				props.add(tmp);
+				System.out.format(
+					"[%d] %s\n",
+					++counter, tmp.toString() 
+				);
+			}
+			System.out.println();
+
+
+			int propId = -1;
+			while (true) {
+				System.out.format(
+					"View apartments under a property [1-%s], 'a' to add a property, 'm' to menu or 'q' to quit: ", 
+					counter
+				);
+				propId = input.getAddPrompt();
+				if (propId >= 0 && propId <= counter) {
+					break;
+				}
+				System.out.println("Invalid input. Try again\n");
+			}
+			System.out.println();
+				
+			try (
+				PreparedStatement getApts = conn.prepareStatement("select * from apartment where prop_id = ?");
+			) {
+				System.out.format(
+					"%s%s Apartments:%s\n",
+					BOLD_ON,
+					props.get(counter - 1).toString(),
+					BOLD_OFF
+				);
+
+				getApts.setInt(1, propId);
+				ResultSet aptRes = getApts.executeQuery();
+				ArrayList<Apartment> aptList = new ArrayList<Apartment>();
+
+				counter = 0;
+
+				while (aptRes.next()) {
+					int prop_id = aptRes.getInt("prop_id");
+					String apt = aptRes.getString("apt");
+					int square_footage = aptRes.getInt("square_footage");
+					int bed_count = aptRes.getInt("bed_count");
+					float bath_count = aptRes.getFloat("bath_count");
+					int rent = aptRes.getInt("rent");
+
+					Apartment tmp = new Apartment(prop_id, apt, square_footage, bed_count, bath_count, rent);
+					aptList.add(tmp);
+					System.out.format(
+						"[%d] %s\n",
+						++counter, 
+						aptList.get(counter - 1).apt
+					);
+				}
+				System.out.println();
+
+				int aptIndex = -1;
+				while (true) {
+					System.out.format(
+					"View apartment details [1-%d], 'a' to add apartments, 'm' to menu or 'q' to quit: ",
+					counter
+				);
+					aptIndex = input.getAddPrompt();
+					if (aptIndex >= 0 && aptIndex <= counter) {
+						break;
+					}
+					System.out.println("Invalid input. Try again\n");
+				}
+				System.out.println();
+
+				System.out.println(aptList.get(aptIndex - 1).toString());
+				System.out.println();
+			}
+
+
 		}
 	}
 
-	public void tenants() {
+	public void people() throws NumberFormatException, IOException, ExitException, MenuException, SQLException {
+		System.out.println("Search by:");
+		System.out.println("[1] Name");
+		System.out.println("[2] ID");
+		int choice = -1;
+		while (choice == -1) {
+			try {
+				choice = input.getMenuInt("Option [1-2]: ");
+			} 
+			catch (NumberFormatException e) {
+				System.out.println("Invalid input. Please try again");
+			}
+			if (choice == 1 || choice == 2) break;
+		}
 
+		String sqlPrefix = String.format(
+			"select " +
+			"person.id as id, first_name, last_name, ssn, age, phone_number, email, credit_score, apt " +
+			"from " +
+			"(((person left outer join renter_info on renter_info.person_id = person.id) " + 
+			"natural left outer join person_on_lease) " +
+			"left outer join lease on lease_id = lease.id)" + 
+			"natural left outer join apartment "
+		);
+
+		switch (choice) {
+			case 1: Person.searchName(sqlPrefix, conn, input); break;
+			case 2: Person.searchId(sqlPrefix, conn, input); break;
+
+		}
 	}
 
 	public void lease() {

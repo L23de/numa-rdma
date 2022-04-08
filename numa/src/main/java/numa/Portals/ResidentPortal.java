@@ -48,6 +48,7 @@ public class ResidentPortal extends Portal {
 			System.out.println("[1] My Info");
 			System.out.println("[2] Make Payment");
 			System.out.println("[3] My Lease Details");
+			System.out.println();
 			int mainChoice = super.portal(input, 3);
 			
 			switch (mainChoice) {
@@ -62,9 +63,8 @@ public class ResidentPortal extends Portal {
 
 	/** Check that the resident is in the portal and retrieve all information relevant to the resident or simply store the user ID */ 
 	public int residentLogin() throws IOException, ExitException, MenuException {
-		System.out.print("Resident ID: ");
 		try {
-			int resId = input.getMenuInt();
+			int resId = input.getMenuInt("Resident ID: ");
 			return resId;
 		} catch (NumberFormatException e) {
 			System.out.println("Try again with a numeric value\n");
@@ -105,8 +105,8 @@ public class ResidentPortal extends Portal {
 				"Age: %d\n" +
 				"Phone Number: %s\n" +
 				"Email: %s\n" +
-				"Credit Score on File: %d\n"
-				, first_name, last_name, resId, ssn, age, phone_number, email, credit_score
+				"Credit Score on File: %d\n",
+				first_name, last_name, resId, ssn, age, phone_number, email, credit_score
 			);
 
 			// Also show payment info
@@ -123,22 +123,31 @@ public class ResidentPortal extends Portal {
 			String cardOut = "";
 
 			while (venmoInfo.next()) {
+				int payment_id = venmoInfo.getInt("id");
 				String handle = venmoInfo.getString("handle");
-				Venmo acc = new Venmo(handle);
-				venmoOut += " - " + acc.toString();
+				Venmo acc = new Venmo(payment_id, handle);
+				venmoOut += "- " + acc.toString();
+				if (payment_id == preferred_payment) {
+					venmoOut += "*";
+				}
 				venmoOut += "\n";
 			}
 
 			while (achInfo.next()) {
+				int payment_id = achInfo.getInt("id");
 				String bank = achInfo.getString("bank_name");
 				String acct = achInfo.getString("acct_num");
 				String rout = achInfo.getString("routing_num");
-				ACH acc = new ACH(acct, rout, bank);
-				achOut += " - " + acc.toString();
+				ACH acc = new ACH(payment_id, acct, rout, bank);
+				achOut += "- " + acc.toString();
+				if (payment_id == preferred_payment) {
+					achOut += "*";
+				}
 				achOut += "\n";
 			}
 
 			while (cardInfo.next()) {
+				int payment_id = cardInfo.getInt("id");
 				String first = cardInfo.getString("first_name");
 				String last = cardInfo.getString("last_name");
 				String card_num = cardInfo.getString("card_num");
@@ -146,8 +155,11 @@ public class ResidentPortal extends Portal {
 				String cvv = cardInfo.getString("cvv");
 				String pin = cardInfo.getString("pin");
 
-				Card acc = new Card(first, last, card_num, exp, cvv, pin);
-				cardOut += " - " + acc.toString();
+				Card acc = new Card(payment_id, first, last, card_num, exp, cvv, pin);
+				cardOut += "- " + acc.toString();
+				if (payment_id == preferred_payment) {
+					cardOut += "*";
+				}
 				cardOut += "\n";
 			}
 
@@ -168,8 +180,10 @@ public class ResidentPortal extends Portal {
 				System.out.println(cardOut);
 			}
 
-			System.out.print("Do you need to add a new payment? [Y/N]: ");
+			System.out.print("Do you need to add a new payment? [Y/n]: ");
 			String yn = input.getPrompt();
+			if (yn.equals("")) yn = "y";
+			System.out.println();
 
 			switch(yn.toLowerCase()) {
 				case "y": new Payment(conn, input, resId); break;

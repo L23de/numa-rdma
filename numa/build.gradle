@@ -37,6 +37,13 @@ dependencies {
 
 }
 
+// Support Lehigh Sunlab Java JDK
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
+}
+
 testing {
     suites {
         // Configure the built-in test suite
