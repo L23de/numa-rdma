@@ -15,11 +15,11 @@ public class NUMA {
 	public static void main (String[] args) throws IOException {
 		boolean connected = false;
 
-		// Re-prompts whenever user is not connected
-		do {
-			try (
-				Reader input = new Reader();
-			) {
+		try (
+			Reader input = new Reader();
+		) {
+			// Re-prompts whenever user is not connected
+			do {
 				String[] loginInfo = new String[2];
 				Dotenv dotenv = Dotenv.load();
 				String DB_URL = dotenv.get("DB_URL");
@@ -31,77 +31,72 @@ public class NUMA {
 					loginInfo = getLogin(input);
 				}
 
-				// Try logging in and creating a prepared statement
 				try (
 					Connection conn = DriverManager.getConnection(DB_URL, loginInfo[0], loginInfo[1]);
 				) {
 					conn.setAutoCommit(false);
-
 					connected = true;
 
 					while (connected) {
 						try {
+							System.out.println();
 							System.out.println("============================================");
 							System.out.println("Northside Uncommons Management of Apartments");
 							System.out.println("============================================");
 							System.out.println("Enter 'm' to return here and 'q' to quit the program at any time\n");
 							System.out.println("[1] Resident Portal");
-							System.out.println("[2] Management Portal");
-							// System.out.println("[3] Shareholder Disclosures\n");
+							System.out.println("[2] Management Portal\n");
 
-							Boolean portalEntered = false;
+							boolean portalEntered = false;
+
 							while (!portalEntered) {
 								try {
 									String portalChoice = input.getMenuLine("Portal #: ");
-									
-									switch(portalChoice) {
-									case "1":
-										new ResidentPortal(conn, input);
-										portalEntered = true;
-										break;
-									case "2":
-										new ManagementPortal(conn, input);
-										portalEntered = true;
-										break;
-									// case "3":
-									// 	new ShareholderPortal(conn, input);
-									// 	portalEntered = true;
-									// 	break;
-									default:
-										System.out.println("Invalid input, please only enter numbers 1 - 3\n");
-									} 
-								} finally {}
+
+									switch (portalChoice) {
+										case "1":
+											new ResidentPortal(conn, input);
+											portalEntered = true;
+											break;
+										// case "2":
+										// 	new ManagementPortal(conn, input);
+										// 	portalEntered = true;
+										// 	break;
+										default:
+											System.out.println("Invalid input, please only enter numbers 1 - 2\n");
+									}
+								} 
+								finally {}
 							}
+
 							System.out.println("Returning to the main menu...\n");
 						}
 						catch (MenuException e) {
 							// Do nothing
-						} 
+						}
 						catch (SQLException e) {
 							System.out.println("SQL Exception: " + e);
 							System.out.println("Returning to the main menu...\n");
 						}
 					}
-				} 
+				}
 				catch (SQLException e) {
-					// Specific exception for bad user/pass combo
 					if (e.getErrorCode() == 1017) {
-						System.out.println("Login denied. Please try again");
+						System.out.println("Login denied. Please try again\n");
 					} else {
 						System.out.println("Failed to connect to the database. Please try again at a later time");
 					}
 				}
-				catch (IOException e) {
-					System.out.println("IOException: " + e);
-				} 
-				catch (ExitException e) {
-					System.out.println("Exiting...");
-				}
 
-			} catch (IOException e) {
-				System.out.println("IOException: " + e);
-			}
-		} while (!connected);
+			} while (!connected);
+
+		} 
+		catch (IOException e) {
+			System.out.println("IO Exception: " + e);
+		}
+		catch (ExitException e) {
+			System.out.println("Exiting...");
+		}
 	}
 
 	/** 

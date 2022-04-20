@@ -17,7 +17,7 @@ BEGIN
 	SELECT COUNT(*) into amt
 	FROM lease
 	WHERE 
-		prop_id = ? AND apt = ? AND
+		prop_id = propId AND apt = apt AND
 		TO_CHAR(ADD_MONTHS(start_date, term_length), 'YYYYMMDD') < TO_CHAR(CURRENT_TIMESTAMP, 'YYYYMMDD');
 	
 	IF amt <> 0 THEN
