@@ -1,3 +1,5 @@
+-- Used by tenants to make an outstanding payment
+
 CREATE OR REPLACE PROCEDURE make_payment (
 	amen_id IN amenity_payment.amenity_id%type,
 	lease_id IN lease_payment.lease_id%type,
@@ -10,12 +12,12 @@ CREATE OR REPLACE PROCEDURE make_payment (
 IS
 BEGIN
 	IF amen_id <> -1 THEN
-		INSERT INTO amenity_payment(date_paid, pay_method_id, pay_amt, payer, memo)
-		VALUES(DEFAULT, pay_method, pay_amt, payer, memo);
+		INSERT INTO amenity_payment(amenity_id, date_paid, pay_method_id, pay_amt, payer, memo)
+		VALUES(amen_id, CURRENT_TIMESTAMP, pay_method, pay_amt, payer, memo);
 		ret := 0;
 	ELSIF lease_id <> -1 THEN
-		INSERT INTO lease_payment(date_paid, pay_method_id, pay_amt, payer, memo)
-		VALUES(DEFAULT, pay_method, pay_amt, payer, memo);
+		INSERT INTO lease_payment(lease_id, date_paid, pay_method_id, pay_amt, payer, memo)
+		VALUES(lease_id, CURRENT_TIMESTAMP, pay_method, pay_amt, payer, memo);
 		ret := 0;
 	ELSE
 		ret := 1;
