@@ -5,6 +5,7 @@ import java.io.IOException;
 import numa.Reader;
 import numa.Exceptions.*;
 
+
 public class Portal {
 	/**
 	 * Standard interface for all the portals

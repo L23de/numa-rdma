@@ -16,6 +16,7 @@ import javax.naming.spi.DirStateFactory.Result;
 import numa.Reader;
 import numa.Exceptions.*;
 
+
 public class ManagementPortal extends Portal {
 	final String BOLD_ON = "\033[1m";
 	final String BOLD_OFF = "\033[0m";

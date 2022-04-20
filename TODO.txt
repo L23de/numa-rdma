@@ -1,0 +1,33 @@
+Resident Portal
+- My Info
+	- View personal info 🗸
+	- Add payments 🗸
+
+- My Lease
+	- View lease info 🗸
+	- Add pets (if apt has a pet amenity) 🗸
+
+- Make Payment
+	- View outstanding payments (Only charge pet amenity if pet is on lease)
+	- Make a payment 🗸
+
+=======================================================================
+Management Portal
+- Properties
+	- View properties/apartments
+	- Add properties/apartments [Bulk]
+
+- People
+	- View people data
+
+- Lease
+	- View lease data
+	- Create new lease
+	- Add/remove person
+	- Add/remove pet
+
+- Visits
+	- Log a person's visit
+	- View visits by apartment (Aggregate)
+
+- Change PIN

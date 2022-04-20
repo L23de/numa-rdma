@@ -11,8 +11,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 import numa.Reader;
-import numa.Exceptions.ExitException;
-import numa.Exceptions.MenuException;
+import numa.Exceptions.*;
 
 interface Objects {
 	final String BOLD_ON = "\033[1m";

@@ -10,7 +10,7 @@ import numa.Portals.*;
 import numa.Exceptions.*;
 
 public class NUMA {
-	final static boolean DEV = true;
+	final static boolean DEV = false;
 
 	public static void main (String[] args) throws IOException {
 		boolean connected = false;
@@ -23,11 +23,10 @@ public class NUMA {
 				String[] loginInfo = new String[2];
 				Dotenv dotenv = Dotenv.load();
 				String DB_URL = dotenv.get("DB_URL");
+
 				if (DEV) {
-					String USER = dotenv.get("USERNAME");
-					String PASS = dotenv.get("PASSWORD");
-					loginInfo[0] = USER;
-					loginInfo[1] = PASS;
+					loginInfo[0] = dotenv.get("USERNAME");
+					loginInfo[1] = dotenv.get("PASSWORD");
 				} else {
 					loginInfo = getLogin(input);
 				}
@@ -39,6 +38,7 @@ public class NUMA {
 					conn.setAutoCommit(false);
 
 					connected = true;
+
 					while (connected) {
 						try {
 							System.out.println("============================================");
@@ -86,7 +86,7 @@ public class NUMA {
 				catch (SQLException e) {
 					// Specific exception for bad user/pass combo
 					if (e.getErrorCode() == 1017) {
-						System.out.println("Login denied. Please try again\n");
+						System.out.println("Login denied. Please try again");
 					} else {
 						System.out.println("Failed to connect to the database. Please try again at a later time");
 					}

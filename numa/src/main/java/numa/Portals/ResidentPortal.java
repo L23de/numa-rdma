@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import numa.Reader;
 import numa.Exceptions.*;
 
+
 public class ResidentPortal extends Portal {
 	final String BOLD_ON = "\033[1m";
 	final String BOLD_OFF = "\033[0m";
