@@ -47,13 +47,12 @@ public class NUMA {
 							System.out.println("Enter 'm' to return here and 'q' to quit the program at any time\n");
 							System.out.println("[1] Resident Portal");
 							System.out.println("[2] Management Portal");
-							System.out.println("[3] Shareholder Disclosures\n");
+							// System.out.println("[3] Shareholder Disclosures\n");
 
 							Boolean portalEntered = false;
 							while (!portalEntered) {
-								System.out.print("Portal #: ");
 								try {
-									String portalChoice = input.getMenuLine();
+									String portalChoice = input.getMenuLine("Portal #: ");
 									
 									switch(portalChoice) {
 									case "1":
@@ -64,10 +63,10 @@ public class NUMA {
 										new ManagementPortal(conn, input);
 										portalEntered = true;
 										break;
-									case "3":
-										new ShareholderPortal(conn, input);
-										portalEntered = true;
-										break;
+									// case "3":
+									// 	new ShareholderPortal(conn, input);
+									// 	portalEntered = true;
+									// 	break;
 									default:
 										System.out.println("Invalid input, please only enter numbers 1 - 3\n");
 									} 

@@ -63,13 +63,8 @@ public class ResidentPortal extends Portal {
 
 	/** Check that the resident is in the portal and retrieve all information relevant to the resident or simply store the user ID */ 
 	public int residentLogin() throws IOException, ExitException, MenuException {
-		try {
-			int resId = input.getMenuInt("Resident ID: ");
-			return resId;
-		} catch (NumberFormatException e) {
-			System.out.println("Try again with a numeric value\n");
-		}
-		return -1;
+		int resId = input.getMenuInt("Resident ID: ");
+		return resId;
 	}
 
 	/** View person info and add payments */
@@ -180,8 +175,7 @@ public class ResidentPortal extends Portal {
 				System.out.println(cardOut);
 			}
 
-			System.out.print("Do you need to add a new payment? [Y/n]: ");
-			String yn = input.getPrompt();
+			String yn = input.getPrompt("Do you need to add a new payment? [Y/n]: ");
 			if (yn.equals("")) yn = "y";
 			System.out.println();
 

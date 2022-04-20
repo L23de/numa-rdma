@@ -28,11 +28,7 @@ public class Payment {
 		// Makes sure choice is in [1,4]
 		int choice = -1;
 		while (!(choice >= 1 && choice <= 4)) {
-			try {
-				choice = input.getMenuInt("New Payment Method [1-4]: ");
-			} catch (NumberFormatException e) {
-				System.out.println("Please try again");
-			}
+			choice = input.getMenuInt("New Payment Method [1-4]: ");
 		}
 
 		try {
@@ -56,12 +52,9 @@ public class Payment {
 
 	public void addACH() throws IOException, ExitException, SQLException {
 		System.out.println("Bank ACH Information:\n");
-		System.out.print("Bank Name: ");
-		String bank = input.getPrompt();
-		System.out.print("Account Number [17]: ");
-		String acct_num = input.getPrompt();
-		System.out.print("Routing Number [9]: ");
-		String rout_num = input.getPrompt();
+		String bank = input.getPrompt("Bank Name: ");
+		String acct_num = input.getPrompt("Account Number [17]: ");
+		String rout_num = input.getPrompt("Routing Number [9]: ");
 
 		try (
 			CallableStatement add = this.conn.prepareCall("{call add_ach(?, ?, ?, ?)}");
@@ -77,25 +70,19 @@ public class Payment {
 
 	public void addCard(Boolean debit) throws IOException, ExitException, SQLException {
 		if (debit) System.out.println("Debit Card Information"); else System.out.println("Credit Card Information");
-		System.out.print("Cardholder First Name: ");
-		String first_name = input.getPrompt();
-		System.out.print("Cardholder Last Name: ");
-		String last_name = input.getPrompt();
-		System.out.print("Card Number [19]: ");
-		String card_num = input.getPrompt();
-		System.out.print("Expiration Date (MM/YYYY): ");
-		String exp_date = input.getPrompt();
-		System.out.print("CVV [3]: ");
-		String cvv = input.getPrompt();
+		String first_name = input.getPrompt("Cardholder First Name: ");
+		String last_name = input.getPrompt("Cardholder Last Name: ");
+		String card_num = input.getPrompt("Card Number [19]: ");
+		String exp_date = input.getPrompt("Expiration Date (MM/YYYY): ");
+		String cvv = input.getPrompt("CVV [3]: ");
 
 		// Debit specific
 		try (
 			CallableStatement add = this.conn.prepareCall("{call add_card(?, ?, ?, ?, ?, ?, ?)}");
 		) {
 			if (debit) {
-				String pin;
-				System.out.print("PIN # [4]: ");
-				pin = input.getPrompt();
+				String pin;	
+				pin = input.getPrompt("PIN # [4]: ");
 				add.setString(7, pin);
 			} else {
 				add.setNull(7, Types.CHAR);
@@ -113,8 +100,7 @@ public class Payment {
 	}
 
 	public void addVenmo() throws IOException, ExitException, SQLException {
-		System.out.print("Venmo Handle (Include the '@'): ");
-		String handle = input.getPrompt();
+		String handle = input.getPrompt("Venmo Handle (Include the '@'): ");
 
 		try (
 			CallableStatement add = this.conn.prepareCall("{call add_venmo(?, ?)}");

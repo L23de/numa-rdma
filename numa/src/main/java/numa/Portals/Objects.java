@@ -231,6 +231,10 @@ class Person implements Objects {
 	String email;
 	int credit_score;
 
+	public Person(boolean valid) {
+		this.id = -1;
+	}
+
 	public Person(int id, String first, String last, String ssn, int age, String phone_num, String email, int credit_score) {
 		this.id = id;
 		this.first_name = first;
@@ -256,13 +260,12 @@ class Person implements Objects {
 		return outStr;
 	}
 
-	public static void searchName(String prefix, Connection conn, Reader input) throws SQLException, IOException, ExitException {
+	public static void searchName(String prefix, Connection conn, Reader input, boolean verbose) throws SQLException, IOException, ExitException {
 		prefix += "where first_name = ? or last_name = ?";
 		try (
 			PreparedStatement searchName = conn.prepareStatement(prefix);
 		) {
-			System.out.print("First or Last Name: ");
-			String name = input.getPrompt();
+			String name = input.getPrompt("First or Last Name: ");
 			name = name.substring(0, 1).toUpperCase() + name.substring(1);
 			System.out.println();
 			searchName.setString(1, name);
@@ -291,7 +294,7 @@ class Person implements Objects {
 		}
 	}
 
-	public static void searchId(String prefix, Connection conn, Reader input) throws NumberFormatException, IOException, ExitException, MenuException, SQLException {
+	public static void searchId(String prefix, Connection conn, Reader input) throws IOException, ExitException, MenuException, SQLException {
 		prefix += "where person.id = ?";
 		try (
 			PreparedStatement searchName = conn.prepareStatement(prefix);

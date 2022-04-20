@@ -13,15 +13,11 @@ public class Portal {
 	public int portal(Reader input, int maxOpts) throws IOException, ExitException, MenuException {
 		int choice = -1;
 		while (choice == -1) {
-			try {
-				choice = input.getMenuInt("Select an option [1-" + maxOpts + "]: ");
-				// Makes sure choice is within bounds
-				if (!(choice >= 1 && choice <= maxOpts)) {
-					choice = -1;
-					System.out.println("Please try again");
-				}
-			} catch (NumberFormatException e) {
-				
+			choice = input.getMenuInt("Select an option [1-" + maxOpts + "]: ");
+			// Makes sure choice is within bounds
+			if (!(choice >= 1 && choice <= maxOpts)) {
+				choice = -1;
+				System.out.println("Please try again");
 			}
 		}
 		System.out.println();
@@ -31,8 +27,7 @@ public class Portal {
 	/** Performed at the end of a chain of prompt events */
 	public void sessionReset(Reader input) throws IOException, ExitException, MenuException {
 		do {
-			System.out.print("Enter 'm' to return to the main menu or 'q' to quit the program: ");
-			input.getMenuLine();
+			input.getMenuLine("Enter 'm' to return to the main menu or 'q' to quit the program: ");
 			System.out.println("Invalid input. Try again\n");
 		} while (true);
 	}

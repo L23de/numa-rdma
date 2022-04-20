@@ -1,0 +1,1 @@
+SELECT COUNT(*) FROM renter_info where person_id = ?;

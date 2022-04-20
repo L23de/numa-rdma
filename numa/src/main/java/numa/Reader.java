@@ -16,8 +16,10 @@ public class Reader extends BufferedReader {
 	}
 
 	/** Used for menu input (Navigating between portals and subportals) */ 
-	public String getMenuLine() throws IOException, ExitException, MenuException {
+	public String getMenuLine(String prompt) throws IOException, ExitException, MenuException {
+		System.out.print(prompt);
 		String input = super.readLine().toLowerCase();
+		System.out.println();
 		if (input.equals("q") || input.equals("'q'")) {
 			System.out.println();
 			throw new ExitException();
@@ -29,31 +31,36 @@ public class Reader extends BufferedReader {
 		return input;
 	}
 
-	//** Used for menu input with integer values */
-	public int getMenuInt(String prompt) throws IOException, ExitException, MenuException, NumberFormatException {
-		System.out.print(prompt);
-		String input = this.getMenuLine();
-		System.out.println();
-		try {
-			return Integer.parseInt(input);
-		} catch (NumberFormatException e) {
-			throw new NumberFormatException();
+	/** Used for menu input with integer values */
+	public int getMenuInt(String prompt) throws IOException, ExitException, MenuException {
+		while (true) {
+			String input = this.getMenuLine(prompt);
+			System.out.println();
+			try {
+				return Integer.parseInt(input);
+			} catch (NumberFormatException e) {
+				System.out.println("Invalid input. Try again");
+			}
 		}
 	}
 
-	//** Used for non-menu inputs */
-	public String getPrompt() throws IOException, ExitException {
+	/** Used for non-menu inputs */
+	public String getPrompt(String prompt) throws IOException, ExitException {
+		System.out.print(prompt);
 		String input = super.readLine();
+		System.out.println();
 		if (input.equals("q") || input.equals("'q'")) {
 			throw new ExitException();
 		}
 		return input;
 	}
 
-	//** Used for non-menu inputs that allows validation */
-	public String getPrompt(Validate validation) throws IOException, ExitException {
+	/** Used for non-menu inputs that allows validation */
+	public String getPrompt(String prompt, Validate validation) throws IOException, ExitException {
 		while (true) {
+			System.out.print(prompt);
 			String input = super.readLine();
+			System.out.println();
 			if (input.equals("q") || input.equals("'q'")) {
 				throw new ExitException();
 			}
@@ -65,9 +72,9 @@ public class Reader extends BufferedReader {
 		}
 	}
 
-	//** Used for multi-action prompts that allow adding to the database */
-	public int getAddPrompt() throws IOException, ExitException, MenuException {
-		String input = this.getMenuLine();
+	/** Used for multi-action prompts that allow adding to the database */
+	public int getAddPrompt(String prompt) throws IOException, ExitException, MenuException {
+		String input = this.getMenuLine(prompt);
 		if (input.equals("a") || input.equals("'a'")) {
 			return 0;
 		}

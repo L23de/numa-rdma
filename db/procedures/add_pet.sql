@@ -1,4 +1,4 @@
-CREATE OR REPLACE PROCEDURE add_pet_lease (
+CREATE OR REPLACE PROCEDURE add_pet (
 		animal pet.animal%type,
 		pet_name pet.pet_name%type,
 		lease_id lease.id%type

@@ -154,20 +154,9 @@ CREATE TABLE visited (
 	FOREIGN KEY(prop_id, apt) REFERENCES apartment(prop_id, apt) ON DELETE CASCADE
 );
 
-CREATE TABLE prev_addr (
-	person_id NUMBER,
-	street_name VARCHAR2(255),
-	city VARCHAR2(255) NOT NULL,
-	state CHAR(2) NOT NULL
-		CHECK (state like '__'),
-	zipcode CHAR(5),
-	PRIMARY KEY(person_id, street_name, zipcode),
-	FOREIGN KEY(person_id) REFERENCES person(id) ON DELETE CASCADE
-);
-
 CREATE TABLE renter_info (
 	person_id NUMBER,
-	ssn CHAR(11)
+	ssn CHAR(11) UNIQUE
 		CHECK (REGEXP_LIKE(ssn, '\d{3}-\d{2}-\d{4}')),
 	preferred_payment NUMBER NOT NULL,
 	PRIMARY KEY(person_id),
@@ -182,7 +171,7 @@ CREATE TABLE lease (
 	id NUMBER GENERATED ALWAYS AS IDENTITY,
 	prop_id NUMBER NOT NULL,
 	apt VARCHAR2(5) NOT NULL,
-	start_date DATE NOT NULL,
+	start_date DATE DEFAULT CURRENT_TIMESTAMP,
 	term_length NUMBER NOT NULL,
 	rent_amount NUMBER NOT NULL,
 	PRIMARY KEY(id),
