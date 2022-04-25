@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import numa.Reader;
@@ -52,7 +53,7 @@ class Lease implements Objects {
 			"Lease Start: %s\n" +
 			"Lease Term Length: %d\n" +
 			"Rent: $%d",
-			street_name, apt, city, state, zip, start_date, term_length, rent_amount
+			street_name, apt, city, state, zip, new SimpleDateFormat("MM/dd/yyyy").format(start_date), term_length, rent_amount
 		);
 		return outStr;
 	}

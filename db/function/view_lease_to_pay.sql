@@ -2,6 +2,8 @@
 -- End date of the lease is past today's date
 -- Payment has already been made for the month or first payment is due
 
+-- Call using 'select * from table(view_lease_to_pay(pid));'
+
 CREATE OR REPLACE FUNCTION view_lease_to_pay (
 	pid number
 ) RETURN lease_pay_table 

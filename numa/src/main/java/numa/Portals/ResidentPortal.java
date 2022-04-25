@@ -190,6 +190,7 @@ public class ResidentPortal extends Portal {
 
 	/** Show all payments that need to be made and some details */ 
 	public void makePayment() {
+		
 	}
 
 	/** Read only of apartment details */ 
