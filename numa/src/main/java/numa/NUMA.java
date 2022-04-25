@@ -88,6 +88,7 @@ public class NUMA {
 						System.out.println("Login denied. Please try again\n");
 					} else {
 						System.out.println("Failed to connect to the database. Please try again at a later time");
+						throw new ExitException();
 					}
 				}
 

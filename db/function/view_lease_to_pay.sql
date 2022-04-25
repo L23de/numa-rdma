@@ -29,7 +29,7 @@ BEGIN
 	WHERE 
 		id in (SELECT lease_id from person_on_lease where person_id = pid) AND -- Lease is under the person
 		ADD_MONTHS(start_date, term_length) >= CURRENT_TIMESTAMP AND -- Lease is still active
-		(TO_DATE(date_paid, 'YYYYMM') <> TO_DATE(CURRENT_TIMESTAMP, 'YYYYMM') OR
+		(CURRENT_TIMESTAMP >= ADD_MONTHS(date_paid, 1) OR
 		date_paid is null); -- Lease has not been paid this month (Includes null case)
 
 	-- If months_outstanding is NULL, in Java, set it to ceiling of months between CURRENT_TIMESTAMP - start_date

@@ -27,8 +27,7 @@ public class Portal {
 
 	/** Performed at the end of a chain of prompt events */
 	public void sessionReset(Reader input) throws IOException, ExitException, MenuException {
-		do {
+		while (true)
 			input.getMenuLine("Enter 'm' to return to the main menu or 'q' to quit the program: ");
-		} while (true);
 	}
 }
