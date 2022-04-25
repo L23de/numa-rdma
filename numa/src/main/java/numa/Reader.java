@@ -10,7 +10,7 @@ import numa.Exceptions.*;
  * Reader with various parsing methods
  */
 public class Reader extends BufferedReader {
-	int MAX_TRIES = 5;
+	final int MAX_TRIES = 5;
 
 	public Reader() {
 		super(new InputStreamReader(System.in));
@@ -34,20 +34,21 @@ public class Reader extends BufferedReader {
 	}
 
 	/** Used for menu input with integer values */
-	public int getMenuInt(String prompt) throws IOException, ExitException, MenuException {
-		while (true) {
+	public int getMenuInt(String prompt) throws IOException, ExitException, MenuException, TooManyTriesException {
+		int i = 0;
+		while (i++ < MAX_TRIES) {
 			String input = this.getMenuLine(prompt);
-			System.out.println();
 			try {
 				return Integer.parseInt(input);
 			} catch (NumberFormatException e) {
 				System.out.println("Invalid input. Try again");
 			}
 		}
+		throw new TooManyTriesException();
 	}
 
 	/** Used for non-menu inputs */
-	public String getPrompt(String prompt) throws IOException, ExitException {
+	public String getPrompt(String prompt) throws IOException {
 		System.out.print(prompt);
 		String input = super.readLine();
 		System.out.println();
@@ -55,7 +56,7 @@ public class Reader extends BufferedReader {
 	}
 
 	/** Used for non-menu inputs that allows for input validation */
-	public String getPrompt(String prompt, Validate validation) throws IOException, ExitException, MenuException {
+	public String getPrompt(String prompt, Validate validation) throws IOException, ExitException, MenuException, TooManyTriesException {
 		int i = 0;
 		while (i++ < MAX_TRIES) {
 			System.out.print(prompt);
@@ -67,7 +68,6 @@ public class Reader extends BufferedReader {
 			}
 			System.out.println(res.errMsg);
 		}
-		System.out.println("Too many attempts. Returning to the main menu...");
-		throw new MenuException();
+		throw new TooManyTriesException();
 	}
 }

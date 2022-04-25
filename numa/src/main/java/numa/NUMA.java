@@ -10,9 +10,9 @@ import numa.Portals.*;
 import numa.Exceptions.*;
 
 public class NUMA {
-	final static boolean DEV = false;
+	final static boolean DEV = true;
 
-	public static void main (String[] args) throws IOException {
+	public static void main (String[] args) {
 		boolean connected = false;
 
 		try (
@@ -39,13 +39,13 @@ public class NUMA {
 
 					while (connected) {
 						try {
-							System.out.println();
 							System.out.println("============================================");
 							System.out.println("Northside Uncommons Management of Apartments");
 							System.out.println("============================================");
 							System.out.println("Enter 'm' to return here and 'q' to quit the program at any time\n");
 							System.out.println("[1] Resident Portal");
-							System.out.println("[2] Management Portal\n");
+							System.out.println("[2] Management Portal");
+							System.out.println();
 
 							boolean portalEntered = false;
 
@@ -71,12 +71,15 @@ public class NUMA {
 
 							System.out.println("Returning to the main menu...\n");
 						}
-						catch (MenuException e) {
-							// Do nothing
-						}
 						catch (SQLException e) {
 							System.out.println("SQL Exception: " + e);
 							System.out.println("Returning to the main menu...\n");
+						}
+						catch (TooManyTriesException e) {
+							System.out.println(e.getMessage());
+						}
+						catch (MenuException e) {
+							System.out.println(e.getMessage());
 						}
 					}
 				}
@@ -108,6 +111,7 @@ public class NUMA {
 		String id = reader.readLine();
 		System.out.print("Enter Oracle Password: ");
 		String passwd = reader.readLine();
+		System.out.println();
 		return new String[]{id, passwd};
 	}
 }

@@ -18,7 +18,7 @@ BEGIN
 	FROM lease
 	WHERE 
 		prop_id = propId AND apt = apt AND
-		TO_CHAR(ADD_MONTHS(start_date, term_length), 'YYYYMMDD') < TO_CHAR(CURRENT_TIMESTAMP, 'YYYYMMDD');
+		ADD_MONTHS(start_date, term_length) < CURRENT_TIMESTAMP;
 	
 	IF amt <> 0 THEN
 		success := -1;

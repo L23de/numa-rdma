@@ -293,7 +293,7 @@ class Person implements Objects {
 		}
 	}
 
-	public static void searchId(String prefix, Connection conn, Reader input) throws IOException, ExitException, MenuException, SQLException {
+	public static void searchId(String prefix, Connection conn, Reader input) throws IOException, ExitException, MenuException, SQLException, TooManyTriesException {
 		prefix += "where person.id = ?";
 		try (
 			PreparedStatement searchName = conn.prepareStatement(prefix);

@@ -2,6 +2,6 @@ package numa.Exceptions;
 
 public class MenuException extends Exception {
 	public MenuException() {
-		super();
+		super("Returning to the main menu...");
 	}
 }

@@ -21,16 +21,17 @@ public class ResidentPortal extends Portal {
 	Connection conn;
 	int resId = -1;
 	
-	public ResidentPortal(Connection conn, Reader input) throws IOException, ExitException, MenuException, SQLException {
+	public ResidentPortal(Connection conn, Reader input) throws IOException, ExitException, MenuException, SQLException, TooManyTriesException {
 		this.input = input;
 		this.conn = conn;
 		
 		try (
+			// db/queries/check_resident.sql
 			PreparedStatement checkResident = conn.prepareStatement("select * from renter_info where person_id = ?");
 		) {
-			System.out.println("\n---------------");
+			System.out.println("---------------");
 			System.out.println("Resident Portal");
-			System.out.println("---------------\n");
+			System.out.println("---------------");
 
 			// Get resident ID
 			while (resId == -1) {
@@ -63,13 +64,13 @@ public class ResidentPortal extends Portal {
 	}
 
 	/** Check that the resident is in the portal and retrieve all information relevant to the resident or simply store the user ID */ 
-	public int residentLogin() throws IOException, ExitException, MenuException {
+	public int residentLogin() throws IOException, ExitException, MenuException, TooManyTriesException {
 		int resId = input.getMenuInt("Resident ID: ");
 		return resId;
 	}
 
 	/** View person info and add payments */
-	public void resInfo() throws SQLException, NumberFormatException, IOException, ExitException, MenuException {
+	public void resInfo() throws SQLException, NumberFormatException, IOException, ExitException, MenuException, TooManyTriesException {
 		try (
 			Statement getInfo = conn.createStatement();
 			PreparedStatement getVenmo = conn.prepareStatement("select payment_method.id, handle from payment_method join venmo on venmo_id = venmo.id where person_id = ?");

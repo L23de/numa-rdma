@@ -14,7 +14,7 @@ public class Payment {
 	Reader input;
 	int resId;
 
-	public Payment(Connection conn, Reader input, int resId) throws NumberFormatException, IOException, ExitException, MenuException, SQLException {
+	public Payment(Connection conn, Reader input, int resId) throws NumberFormatException, IOException, ExitException, MenuException, SQLException, TooManyTriesException {
 		this.conn = conn;
 		this.input = input;
 		this.resId = resId;
