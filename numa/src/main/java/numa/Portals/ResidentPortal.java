@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import javax.naming.spi.DirStateFactory.Result;
+import javax.sound.midi.SysexMessage;
 import javax.swing.plaf.synth.SynthScrollPaneUI;
 
 import numa.Reader;
@@ -185,13 +186,25 @@ public class ResidentPortal extends Portal {
 				System.out.println(cardOut);
 			}
 
-			String yn = input.getPrompt("Do you need to add a new payment? [Y/n]: ");
-			if (yn.equals("")) yn = "y";
-			System.out.println();
+			System.out.println("[1] Add Payment");
+			System.out.println("[2] Change Default Payment");
+			System.out.println("[3] Main Menu");
 
-			switch(yn.toLowerCase()) {
-				case "y": new Payment(conn, input, resId); break;
-				default: return;
+			Boolean repeat = true;
+			while (repeat) {
+				String in = input.getPrompt("Action: ");
+				
+				switch (in.replaceAll("\\s+","")) {
+					case "1": new Payment(conn, input, resId); repeat = false; break;
+					case "2": repeat = false; break;
+					/**
+					 * TODO: Implement a way to change default payment method
+					 */
+					case "3": throw new MenuException();
+					default: 
+						System.out.println("Try again with a valid input of [1-3]");
+						System.out.println();
+				}
 			}
 		}
 	}
