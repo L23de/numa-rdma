@@ -4,13 +4,14 @@
 
 -- Call using 'select * from table(view_lease_to_pay(pid));'
 
-CREATE OR REPLACE FUNCTION view_lease_to_pay (
+CREATE OR REPLACE FUNCTION lease_to_pay (
 	pid number
 ) RETURN lease_pay_table 
 AS
 	tbl_out lease_pay_table;
 BEGIN
 	SELECT lease_pay_row(
+		id,
 		prop_id, 
 		apt, 
 		start_date, 

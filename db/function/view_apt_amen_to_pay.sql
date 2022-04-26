@@ -6,7 +6,12 @@ CREATE OR REPLACE FUNCTION apt_amen_to_pay (
 AS
 	tbl_out amen_pay_table;
 BEGIN
-	SELECT amen_pay_row(amenity.id, amenity, cost)
+	SELECT amen_pay_row(
+		amenity.id, 
+		amenity, 
+		cost,
+		CEIL(MONTHS_BETWEEN(CURRENT_TIMESTAMP, date_paid))
+	)
 	BULK COLLECT INTO tbl_out
 	FROM 
 		-- Check amenities that correspond to the person's lease

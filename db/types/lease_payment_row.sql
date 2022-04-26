@@ -1,4 +1,5 @@
 CREATE OR REPLACE TYPE lease_pay_row as OBJECT(
+	lease_id number,
 	prop_id number,
 	apt varchar2(5),
 	start_date date, 

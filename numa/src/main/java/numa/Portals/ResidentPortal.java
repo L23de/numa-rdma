@@ -1,13 +1,21 @@
 package numa.Portals;
 
 import java.io.IOException;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
+import javax.naming.spi.DirStateFactory.Result;
+import javax.swing.plaf.synth.SynthScrollPaneUI;
 
 import numa.Reader;
 import numa.Exceptions.*;
@@ -189,8 +197,143 @@ public class ResidentPortal extends Portal {
 	}
 
 	/** Show all payments that need to be made and some details */ 
-	public void makePayment() {
-		
+	public void makePayment() throws SQLException, MenuException, IOException {
+		try (
+			PreparedStatement getLeaseId = conn.prepareStatement("select id, prop_id, apt, start_date from lease natural join apartment where lease.id in (select lease_id from person_on_lease where person_id = ?)");
+			PreparedStatement getLeaseToPay = conn.prepareStatement("select * from table(lease_to_pay(?))");
+			PreparedStatement getPropAmenToPay = conn.prepareStatement("select * from table(prop_amen_to_pay(?, ?))");
+			PreparedStatement getAptAmenToPay = conn.prepareStatement("select * from table(apt_amen_to_pay(?, ?, ?))");
+			CallableStatement makePayment = conn.prepareCall("{ call make_payment(?,?,?,?,?,?,?) }");
+			Statement getDefaultPayment = conn.createStatement();
+		) {
+			Integer leaseId;
+			Integer propId;
+			String apt;
+			Date leaseStart;
+			
+			getLeaseId.setInt(1, resId);
+			ResultSet res = getLeaseId.executeQuery();
+
+			if (res.next()) {
+				leaseId = res.getInt("id");
+				propId = res.getInt("prop_id");
+				apt = res.getString("apt");
+				leaseStart = res.getDate("start_date");
+			} else {
+				throw new MenuException("Unable to find resident's lease");
+			}
+
+			Date today = new Date();
+			int counter = 1;
+			ArrayList<int[]> tracker = new ArrayList<int[]>();
+
+			getLeaseToPay.setInt(1, resId);
+			res = getLeaseToPay.executeQuery();
+			if (res.next()) {
+				System.out.println(BOLD_ON + "Lease Payment" + BOLD_OFF);
+				int monthsOutstanding = res.getInt("months_outstanding");
+				if (monthsOutstanding == 0) {
+					monthsOutstanding = getMonths(leaseStart, today);
+				}
+
+				int rent = monthsOutstanding * res.getInt("rent_amount");
+				tracker.add(new int[]{0, res.getInt("lease_id"), rent});
+				System.out.printf("[%d] %s - $%d [%d Month(s) Rent Due]\n", counter++, res.getString("apt"), rent, monthsOutstanding);
+				System.out.println();
+			}
+
+			getPropAmenToPay.setInt(1, leaseId);
+			getPropAmenToPay.setInt(2, propId);
+			res = getPropAmenToPay.executeQuery();
+			String outStr = "";
+			while (res.next()) {
+				int monthsOutstanding = res.getInt("months_outstanding");
+				if (monthsOutstanding == 0) {
+					monthsOutstanding = getMonths(leaseStart, today);
+				}
+
+				int rent = monthsOutstanding * res.getInt("cost");
+				tracker.add(new int[]{1, res.getInt("amen_id"), rent});
+				outStr += String.format("[%d] %s - $%d [%d Month(s) Due]\n", counter++, res.getString("amenity"), rent, monthsOutstanding);
+			}
+
+			getAptAmenToPay.setInt(1, resId);
+			getAptAmenToPay.setInt(2, propId);
+			getAptAmenToPay.setString(3, apt);
+			res = getAptAmenToPay.executeQuery();
+			while (res.next()) {
+				int monthsOutstanding = res.getInt("months_outstanding");
+				if (monthsOutstanding == 0) {
+					monthsOutstanding = getMonths(leaseStart, today);
+				}
+
+				int rent = monthsOutstanding * res.getInt("cost");
+				tracker.add(new int[]{1, res.getInt("amen_id"), rent});
+				outStr += String.format("[%d] %s - $%d [%d Month(s) Due]\n", counter++, res.getString("amenity"), rent, monthsOutstanding);
+			}
+
+			if (outStr != "") {
+				System.out.println(BOLD_ON + "Amenities" + BOLD_OFF);
+				System.out.println(outStr);
+			}
+
+			String in = input.getPrompt("Payments are made in full. For multiple payments, separate numbers with commas\nPay for: ");
+			String[] choices = in.split(",");
+			ArrayList<String> errors = new ArrayList<String>();
+
+			for (String choice: choices) {
+				try {
+					choice = choice.replaceAll("\\s+","");
+					int index = Integer.parseInt(choice);
+					int[] map = tracker.get(index - 1);
+
+					int payId;
+					res = getDefaultPayment.executeQuery("select preferred_payment from renter_info where person_id=" + resId);
+					if (res.next()) {
+						payId = res.getInt("preferred_payment");
+					} else {
+						throw new MenuException("No payment information on file. Please set that up in 'My Info' first");
+					}
+
+					if (map[0] == 0) {
+						// Lease Payment
+						makePayment.setInt(1, -1);
+						makePayment.setInt(2, map[1]);
+					} else {
+						// Amenity Payment
+						makePayment.setInt(1, map[1]);
+						makePayment.setInt(2, -1);
+					}
+
+					makePayment.setInt(3, payId);
+					makePayment.setInt(4, map[2]);
+					makePayment.setInt(5, resId);
+					makePayment.setString(6, "");
+					makePayment.registerOutParameter(7, Types.NUMERIC);
+
+					makePayment.execute();
+
+					int success = makePayment.getInt(7);
+					conn.commit();
+					if (success != 0)
+						errors.add(choice);
+
+				} catch (NumberFormatException e) {
+					System.out.printf("Payment %s is not a valid input\n", choice);
+					errors.add(choice);
+				} catch (SQLException e) {
+					errors.add(choice);
+				} catch (IndexOutOfBoundsException e) {
+					errors.add(choice);
+				}
+			}
+
+			if (errors.size() != 0) {
+				System.out.println("Error paying for payments " + String.join(", ", errors));
+			} else {
+				System.out.println("Payment successful. Thank you!");
+			}
+		}
 	}
 
 	/** Read only of apartment details */ 
@@ -262,5 +405,18 @@ public class ResidentPortal extends Portal {
 				System.out.println();
 			}
 		}
+	}
+
+	public int getMonths(Date start, Date end) throws SQLException {
+		Calendar startTime = new GregorianCalendar();
+		Calendar endTime = new GregorianCalendar();
+
+		startTime.setTime(start);
+		endTime.setTime(end);
+
+		int yearDiff = endTime.get(Calendar.YEAR) - startTime.get(Calendar.YEAR);
+		int monthDiff = endTime.get(Calendar.MONTH) - startTime.get(Calendar.MONTH);
+
+		return yearDiff * 12 + monthDiff;
 	}
 }
