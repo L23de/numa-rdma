@@ -216,7 +216,7 @@ class Card implements Objects {
 			type, card_num.substring(15), first_name, last_name, exp_date, cvv
 		);
 
-		if (!isCredit) out += String.format("PIN: %s", pin);
+		if (!isCredit) out += String.format("\n\tPIN: %s", pin);
 		return out;
 	}
 }

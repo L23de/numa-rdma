@@ -82,18 +82,20 @@ public class ResidentPortal extends Portal {
 	public void resInfo() throws SQLException, NumberFormatException, IOException, ExitException, MenuException, TooManyTriesException {
 		try (
 			Statement getInfo = conn.createStatement();
-			PreparedStatement getVenmo = conn.prepareStatement("select payment_method.id, handle from payment_method join venmo on venmo_id = venmo.id where person_id = ?");
-			PreparedStatement getACH = conn.prepareStatement("select payment_method.id, bank_name, acct_num, routing_num from payment_method join ach on ach_id = ach.id where person_id = ?");
-			PreparedStatement getCard = conn.prepareStatement("select payment_method.id, first_name, last_name, card_num, exp_date, cvv, pin from payment_method join pay_card on card_id = pay_card.id where person_id = ?");
+			PreparedStatement getVenmo = conn.prepareStatement("select payment_method.id, venmo_id, handle from payment_method join venmo on venmo_id = venmo.id where person_id = ?");
+			PreparedStatement getACH = conn.prepareStatement("select payment_method.id, ach_id, bank_name, acct_num, routing_num from payment_method join ach on ach_id = ach.id where person_id = ?");
+			PreparedStatement getCard = conn.prepareStatement("select payment_method.id, card_id, first_name, last_name, card_num, exp_date, cvv, pin from payment_method join pay_card on card_id = pay_card.id where person_id = ?");
 
 		) {
 			// resInfo should only have one entry, because of PK constraints and residentLogin() already checks that resId exists in the renter_info table
 			ResultSet resInfo = getInfo.executeQuery(
-				"select * from  renter_info join person on person.id = renter_info.person_id where id = " + resId
+				"select * from (renter_info join payment_method on renter_info.preferred_payment = payment_method.id) join person on person.id = renter_info.person_id where person.id = " + resId
 			);
 			resInfo.next();
-			String ssn = resInfo.getString("SSN");
-			int preferred_payment = resInfo.getInt("preferred_payment");
+			String ssn = resInfo.getString("ssn");
+			int venmoId = resInfo.getInt("venmo_id");
+			int cardId = resInfo.getInt("card_id");
+			int achId = resInfo.getInt("ach_id");
 			String first_name = resInfo.getString("first_name");
 			String last_name = resInfo.getString("last_name");
 			int age = resInfo.getInt("age");
@@ -120,6 +122,9 @@ public class ResidentPortal extends Portal {
 			getACH.setInt(1, resId);
 			getCard.setInt(1, resId);
 
+			int counter = 1;
+			ArrayList<Integer> payIds = new ArrayList<Integer>();
+
 			ResultSet venmoInfo = getVenmo.executeQuery();
 			ResultSet achInfo = getACH.executeQuery();
 			ResultSet cardInfo = getCard.executeQuery();
@@ -129,44 +134,55 @@ public class ResidentPortal extends Portal {
 			String cardOut = "";
 
 			while (venmoInfo.next()) {
-				int payment_id = venmoInfo.getInt("id");
+				int venmo_id = venmoInfo.getInt("venmo_id");
 				String handle = venmoInfo.getString("handle");
-				Venmo acc = new Venmo(payment_id, handle);
-				venmoOut += "- " + acc.toString();
-				if (payment_id == preferred_payment) {
-					venmoOut += "*";
+				Venmo acc = new Venmo(venmo_id, handle);
+				payIds.add(venmoInfo.getInt("id"));
+				
+				if (venmo_id == venmoId) {
+					venmoOut += String.format("[%d] \033[3m%s\033[0m", counter, acc.toString());
+				} else {
+					venmoOut += String.format("[%d] %s", counter, acc.toString());
 				}
 				venmoOut += "\n";
+				counter++;
 			}
 
 			while (achInfo.next()) {
-				int payment_id = achInfo.getInt("id");
+				int ach_id = achInfo.getInt("ach_id");
 				String bank = achInfo.getString("bank_name");
 				String acct = achInfo.getString("acct_num");
 				String rout = achInfo.getString("routing_num");
-				ACH acc = new ACH(payment_id, acct, rout, bank);
-				achOut += "- " + acc.toString();
-				if (payment_id == preferred_payment) {
-					achOut += "*";
+				ACH acc = new ACH(ach_id, acct, rout, bank);
+				payIds.add(achInfo.getInt("id"));
+
+				if (ach_id == achId) {
+					achOut += String.format("[%d] \033[3m%s\033[0m", counter, acc.toString());
+				} else {
+					achOut += String.format("[%d] %s", counter, acc.toString());
 				}
 				achOut += "\n";
+				counter++;
 			}
 
 			while (cardInfo.next()) {
-				int payment_id = cardInfo.getInt("id");
+				int card_id = cardInfo.getInt("card_id");
 				String first = cardInfo.getString("first_name");
 				String last = cardInfo.getString("last_name");
 				String card_num = cardInfo.getString("card_num");
 				String exp = cardInfo.getString("exp_date");
 				String cvv = cardInfo.getString("cvv");
 				String pin = cardInfo.getString("pin");
+				Card acc = new Card(card_id, first, last, card_num, exp, cvv, pin);
+				payIds.add(cardInfo.getInt("id"));
 
-				Card acc = new Card(payment_id, first, last, card_num, exp, cvv, pin);
-				cardOut += "- " + acc.toString();
-				if (payment_id == preferred_payment) {
-					cardOut += "*";
+				if (card_id == cardId) {
+					cardOut += String.format("[%d] \033[3m%s\033[0m", counter, acc.toString());
+				} else {
+					cardOut += String.format("[%d] %s", counter, acc.toString());
 				}
 				cardOut += "\n";
+				counter++;
 			}
 
 			System.out.println(infoOut);
@@ -186,24 +202,27 @@ public class ResidentPortal extends Portal {
 				System.out.println(cardOut);
 			}
 
+			System.out.println("Note: The italicized payment method is the default when making payments\n");
+
 			System.out.println("[1] Add Payment");
 			System.out.println("[2] Change Default Payment");
 			System.out.println("[3] Main Menu");
 
-			Boolean repeat = true;
-			while (repeat) {
-				String in = input.getPrompt("Action: ");
-				
-				switch (in.replaceAll("\\s+","")) {
-					case "1": new Payment(conn, input, resId); repeat = false; break;
-					case "2": repeat = false; break;
-					/**
-					 * TODO: Implement a way to change default payment method
-					 */
-					case "3": throw new MenuException();
+			int choice = input.getMenuInt("Action: ");
+
+			boolean repeat = true;
+			while(repeat) {
+				switch(choice) {
+					case 1: 
+					new Payment(conn, input, resId); 
+					repeat = false; break;
+					case 2: 
+					changeDefaultPayment(payIds);
+					repeat = false; break;
+					case 3: throw new MenuException();
 					default: 
-						System.out.println("Try again with a valid input of [1-3]");
-						System.out.println();
+					System.out.println("Try again with a valid input of [1-3]");
+					System.out.println();
 				}
 			}
 		}
@@ -431,5 +450,23 @@ public class ResidentPortal extends Portal {
 		int monthDiff = endTime.get(Calendar.MONTH) - startTime.get(Calendar.MONTH);
 
 		return yearDiff * 12 + monthDiff;
+	}
+
+	public void changeDefaultPayment(ArrayList<Integer> payIds) throws SQLException, IOException, MenuException, ExitException, TooManyTriesException {	
+		while (true) {
+
+			try (
+				PreparedStatement defaultChange = conn.prepareStatement("update renter_info set preferred_payment = ? where person_id = ?");
+			) {
+				int choice = input.getMenuInt("Payment Method to set default: ");
+				defaultChange.setInt(1, payIds.get(choice - 1));
+				defaultChange.setInt(2, resId);
+				defaultChange.executeUpdate();
+				conn.commit();
+				break;
+			} catch (IndexOutOfBoundsException e) {
+				System.out.println("Invalid input, please only enter a integer value of the corresponding payment method");
+			}
+		}
 	}
 }

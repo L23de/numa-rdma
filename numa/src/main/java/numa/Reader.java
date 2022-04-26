@@ -37,7 +37,7 @@ public class Reader extends BufferedReader {
 	public int getMenuInt(String prompt) throws IOException, ExitException, MenuException, TooManyTriesException {
 		int i = 0;
 		while (i++ < MAX_TRIES) {
-			String input = this.getMenuLine(prompt);
+			String input = this.getMenuLine(prompt).toLowerCase().replaceAll("\\s+","");
 			try {
 				return Integer.parseInt(input);
 			} catch (NumberFormatException e) {
