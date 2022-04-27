@@ -2,10 +2,8 @@ package numa.Portals;
 import java.io.IOException;
 import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.sql.ResultSet;
 
 import numa.Reader;
 import numa.Exceptions.*;
@@ -114,19 +112,4 @@ public class Payment {
 			add.execute();
 		}
 	}
-
-	// public static int getDefaultPayment(Connection conn, int resId) {
-	// 	try (
-	// 		PreparedStatement defaultPayment = conn.prepareStatement("select preferred_payment from renter_info where person_id = ?");
-	// 	) {
-	// 		defaultPayment.setInt(1, resId);
-	// 		ResultSet res = defaultPayment.executeQuery();
-
-	// 		int payId = -1;
-	// 		if (res.next()) {
-	// 			payId = res.getInt("preferred_payment");
-	// 		}
-	// 		return payId;
-	// 	}
-	// }
 }

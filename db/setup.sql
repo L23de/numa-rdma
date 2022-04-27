@@ -223,3 +223,4 @@ CREATE TABLE amenity_payment (
 	FOREIGN KEY(pay_method_id) REFERENCES payment_method(id),
 	FOREIGN KEY(payer) REFERENCES person(id)
 );
+

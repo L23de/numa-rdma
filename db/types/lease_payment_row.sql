@@ -7,3 +7,4 @@ CREATE OR REPLACE TYPE lease_pay_row as OBJECT(
 	rent_amount number, 
 	months_outstanding VARCHAR2(2)
 );
+

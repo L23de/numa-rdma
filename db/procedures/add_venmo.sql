@@ -6,5 +6,5 @@ CREATE OR REPLACE PROCEDURE add_venmo (
 	BEGIN
 		INSERT INTO venmo(handle) VALUES(handle);
 		SELECT MAX(id) into venmo_id from venmo;
-		INSERT INTO payment_method(person_id, card_id, venmo_id, ach_id) VALUES(person_id, NULL, venmo_id, NULL);
+		INSERT INTO payment_method(person_id, card_id, venmo_id, ach_id) VALU ES(person_id, NULL, venmo_id, NULL);
 	END;

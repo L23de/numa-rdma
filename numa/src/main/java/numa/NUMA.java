@@ -51,17 +51,17 @@ public class NUMA {
 
 							while (!portalEntered) {
 								try {
-									String portalChoice = input.getMenuLine("Portal #: ");
+									int portalChoice = input.getMenuInt("Portal #: ");
 
 									switch (portalChoice) {
-										case "1":
+										case 1:
 											new ResidentPortal(conn, input);
 											portalEntered = true;
 											break;
-										// case "2":
-										// 	new ManagementPortal(conn, input);
-										// 	portalEntered = true;
-										// 	break;
+										case 2:
+											new ManagementPortal(conn, input);
+											portalEntered = true;
+											break;
 										default:
 											System.out.println("Invalid input, please only enter numbers 1 - 2\n");
 									}

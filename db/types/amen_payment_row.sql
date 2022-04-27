@@ -4,3 +4,4 @@ CREATE OR REPLACE TYPE amen_pay_row as OBJECT(
 	cost number,
 	months_outstanding number
 );
+
