@@ -238,35 +238,19 @@ public class ManagementPortal extends Portal {
 
 		// If a new person needs to be registered in the database
 		if (person.id == -1) {
-			String last = input.getPrompt("Last Name: ");
-			last = last.substring(0, 1) + last.substring(1);
-			int age = input.getMenuInt("Age: ");
-			String phone_number = input.getPrompt("Phone Number (###-###-####): ");
-			String email = input.getPrompt("Email: ");
-			int credit_score = input.getMenuInt("Credit Score: ");
-			
-			person = new Person(-1, first, last, null, age, phone_number, email, credit_score);
+			person = addPerson(first);
 		}
-		person.ssn = input.getPrompt("Social Security Number (###-##-####): ");
-		
-		if (person.id == -1) {
-			try (
-				PreparedStatement addPerson = conn.prepareStatement(
-					"insert into person(first_name, last_name, age, phone_number, email, credit_score) values(?, ?, ?, ?, ?, ?)"
-				);
-				Statement getResId = conn.createStatement();
-			) {
-				addPerson.setString(1, person.first_name);
-				addPerson.setString(2, person.last_name);
-				addPerson.setInt(3, person.age);
-				addPerson.setString(4, person.phone_num);
-				addPerson.setString(5, person.email);
-				addPerson.setInt(6, person.credit_score);
-	
-				addPerson.executeUpdate();
-				ResultSet res = getResId.executeQuery("select max(id) as id from person");
-				if (res.next()) person.id = res.getInt("id");
-			}
+
+		String ssn = input.getPrompt("Social Security Number (###-##-####): ");
+		try (
+			PreparedStatement addRenterInfo = conn.prepareStatement("insert into renter_info values(?, ?, ?)");
+		) {
+			addRenterInfo.setInt(1, person.id);
+			addRenterInfo.setString(2, ssn);
+			addRenterInfo.setNull(3, Types.NULL);
+
+			addRenterInfo.execute();
+			conn.commit();
 		}
 		
 		System.out.println("Lease Info: ");
@@ -275,23 +259,18 @@ public class ManagementPortal extends Portal {
 		int term_length = input.getMenuInt("Term Length: ");
 
 		try (
-			CallableStatement add = this.conn.prepareCall("{call sign_lease(?, ?, ?, ?, ?, ?, ?)}");
+			CallableStatement add = this.conn.prepareCall("{call sign_lease(?, ?, ?, ?, ?)}");
 		) {
 			add.setInt(1, person.id);
 			add.setInt(2, propId);
 			add.setString(3, apt);
 			add.setInt(4, term_length);
 			add.registerOutParameter(5, Types.INTEGER);
-			add.registerOutParameter(6, Types.INTEGER);
-			add.registerOutParameter(7, Types.INTEGER);
 
 			
 			add.execute();
-			System.out.println("executed");
+			conn.commit();
 			int ret = add.getInt(5);
-			int amt = add.getInt(6);
-			int valid = add.getInt(7);
-			System.out.format("Ret: %d\nAmt: %d\nValid: %d\n", ret, amt, valid);
 
 			if (ret == -2) {
 				System.out.format("Apt %s does not exist\n", apt);
@@ -302,12 +281,50 @@ public class ManagementPortal extends Portal {
 			}
 		}
 
-		conn.commit();
 		System.out.format("Lease for Apt %s successfully signed to %s %s\n", apt, person.first_name, person.last_name);
+		System.out.println("Please inform the tenant to setup payment details EOD in the Resident Portal");
 	}
 
-	private void visits() {
-		
+	private void visits() throws IOException, SQLException, ExitException, MenuException, TooManyTriesException {
+		System.out.println("New Visit Registration");
+		System.out.println();
+		String first = input.getPrompt("First Name: ");
+		first = first.substring(0, 1) + first.substring(1);
+		Person person = checkPersonExists(first);
+
+		if (person.id == -1) {
+			person = addPerson(first);
+		}
+	}
+
+	private Person addPerson(String firstName) throws SQLException, IOException, MenuException, ExitException, TooManyTriesException {
+		try (
+			PreparedStatement addPerson = conn.prepareStatement(
+				"insert into person(first_name, last_name, age, phone_number, email, credit_score) values(?, ?, ?, ?, ?, ?)"
+			);
+			Statement getResId = conn.createStatement();
+		) {
+			String last = input.getPrompt("Last Name: ");
+			last = last.substring(0, 1) + last.substring(1);
+			int age = input.getMenuInt("Age: ");
+			String phone_number = input.getPrompt("Phone Number (###-###-####): ");
+			String email = input.getPrompt("Email: ");
+			int credit_score = input.getMenuInt("Credit Score: ");
+			Person person = new Person(-1, firstName, last, null, age, phone_number, email, credit_score);
+			
+			addPerson.setString(1, firstName);
+			addPerson.setString(2, last);
+			addPerson.setInt(3, age);
+			addPerson.setString(4, phone_number);
+			addPerson.setString(5, email);
+			addPerson.setInt(6, credit_score);
+
+			addPerson.execute();
+			conn.commit();
+			ResultSet res = getResId.executeQuery("select max(id) as id from person");
+			if (res.next()) person.id = res.getInt("id");
+			return person;
+		}
 	}
 
 	private void changePIN() throws IOException, ExitException, MenuException, SQLException, TooManyTriesException {

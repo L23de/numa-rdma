@@ -158,7 +158,7 @@ CREATE TABLE renter_info (
 	person_id NUMBER,
 	ssn CHAR(11) UNIQUE
 		CHECK (REGEXP_LIKE(ssn, '\d{3}-\d{2}-\d{4}')),
-	preferred_payment NUMBER NOT NULL,
+	preferred_payment NUMBER,
 	PRIMARY KEY(person_id),
     FOREIGN KEY(person_id) REFERENCES person(id) ON DELETE CASCADE,
 	FOREIGN KEY(preferred_payment) REFERENCES payment_method(id)
