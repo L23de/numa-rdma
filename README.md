@@ -52,15 +52,19 @@ The following schemas were generated using the aid of [Mockaroo](https://www.moc
 Below is some pre-populated data that can be used for testing purposes
 
 Properties:
+
 ![Properties Data](images/property.png)
 
 Apartments:
+
 ![Apartment Data](images/apartments.png)
 
 People:
+
 ![People Data](images/person.png)
 
 Leases:
+
 ![Lease Data](images/lease.png)
 
 > Note: Not all mock data scripts have been updated. Some of the data values were manually converted to use PL/SQL Procedures/Functions that were implemented later on
