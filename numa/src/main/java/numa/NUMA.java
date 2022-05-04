@@ -10,7 +10,7 @@ import numa.Portals.*;
 import numa.Exceptions.*;
 
 public class NUMA {
-	final static boolean DEV = true;
+	final static boolean DEV = false;
 
 	public static void main (String[] args) {
 		boolean connected = false;
