@@ -32,6 +32,25 @@ The following schemas were generated using the aid of [Mockaroo](https://www.moc
 - Renter Info - `https://api.mockaroo.com/api/bce9b270`
 - Venmo - `https://api.mockaroo.com/api/5d5a4450`
 
+### Test Data
+
+
+> Note: Not all mock data has been updated. Some of the data values were manually converted to use PL/SQL Procedures/Functions once they were implemented
+
+## Functions
+
+- Resident Portal (Requires sign-in with a valid resident ID (Person with a lease))
+	- My Info - Displays personal information about the resident
+	- Make Payment - View upcoming payments and pay for them
+	- My Lease Details - View details about their lease and their personal information
+
+- Management Portal
+
+### Assumptions
+
+- 
+
+
 ## Dev Notes
 
 - When a user logins to the system, the system should automatically create a view for that user that only represents the info that they can see. All queries will be used on that

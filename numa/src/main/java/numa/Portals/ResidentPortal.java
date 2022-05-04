@@ -435,19 +435,6 @@ public class ResidentPortal extends Portal {
 		}
 	}
 
-	public int getMonths(Date start, Date end) throws SQLException {
-		Calendar startTime = new GregorianCalendar();
-		Calendar endTime = new GregorianCalendar();
-
-		startTime.setTime(start);
-		endTime.setTime(end);
-
-		int yearDiff = endTime.get(Calendar.YEAR) - startTime.get(Calendar.YEAR);
-		int monthDiff = endTime.get(Calendar.MONTH) - startTime.get(Calendar.MONTH);
-
-		return yearDiff * 12 + monthDiff;
-	}
-
 	public void changeDefaultPayment(ArrayList<Integer> payIds) throws SQLException, IOException, MenuException, ExitException, TooManyTriesException {	
 		while (true) {
 

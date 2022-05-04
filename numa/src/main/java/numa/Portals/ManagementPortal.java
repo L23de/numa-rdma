@@ -7,8 +7,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.sql.Types;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import numa.Reader;
 import numa.Exceptions.*;
@@ -29,9 +32,9 @@ public class ManagementPortal extends Portal {
 		System.out.println("-----------------\n");
 
 		// Get management login
-		// if (!getManagerLogin()) {
-		// 	return;
-		// }
+		if (!getManagerLogin()) {
+			return;
+		}
 		
 		System.out.println("[1] Properties");
 		System.out.println("[2] People");
@@ -211,11 +214,78 @@ public class ManagementPortal extends Portal {
 		switch (choice) {
 			case 1: Person.searchName(conn, input, true); break;
 			case 2: Person.searchId(conn, input); break;
-
 		}
 	}
 
 	private void lease() throws IOException, ExitException, SQLException, MenuException, TooManyTriesException {
+		System.out.println("[1] New Lease Registration");
+		System.out.println("[2] Modify Existing Lease Term");
+		System.out.println();
+
+		int choice = -1;
+		while (choice == -1) {
+			choice = input.getMenuInt("Option [1-2]: ");
+			if (choice == 1 || choice == 2) break;
+		}
+
+		switch (choice) {
+			case 1: leaseReg(); break;
+			case 2: modifyTerm(); break;
+		}
+	}
+
+	private void modifyTerm() throws IOException, ExitException, MenuException, TooManyTriesException, SQLException {
+		System.out.println("Modify Term Length:");
+		System.out.println();
+		boolean valid = false;
+
+		while (!valid) {
+			try (
+				PreparedStatement getLeaseBasics = conn.prepareStatement("select street_name, apt, city, state, zipcode, start_date, ADD_MONTHS(start_date, term_length) as end_date, term_length from lease join property on lease.prop_id = property.id where lease.id = ?");
+				PreparedStatement modifyLength = conn.prepareStatement("UPDATE lease SET term_length = ? WHERE id = ?");
+			) {
+				int lid = input.getMenuInt("Lease ID: ");
+				getLeaseBasics.setInt(1, lid);
+				ResultSet leaseDetails = getLeaseBasics.executeQuery();
+
+				if (leaseDetails.next()) {
+					valid = true;
+					String street = leaseDetails.getString("street_name");
+					String apt = leaseDetails.getString("apt");
+					String city = leaseDetails.getString("city");
+					String state = leaseDetails.getString("state");
+					String zip = leaseDetails.getString("zipcode");
+					Timestamp start = leaseDetails.getTimestamp("start_date");
+					Timestamp end = leaseDetails.getTimestamp("end_date");
+					int length = leaseDetails.getInt("term_length");
+
+					SimpleDateFormat dateFmt = new SimpleDateFormat("MM/dd/yyyy");
+					int monthDiffNow = getMonths(start, new Date());
+
+					System.out.format("Modify Lease %d:\n", lid);
+					System.out.format("%s %s %s %s %s\n(%d Month Lease: %s - %s)", street, apt, city, state, zip, length, dateFmt.format(start), dateFmt.format(end));
+					System.out.println();
+
+					int change = input.getMenuInt("# of months to change to: ");
+					while (change <= monthDiffNow) {
+						System.out.println("Invalid input, # of months must be greater than " + monthDiffNow);
+					}
+
+					modifyLength.setInt(1, change);
+					modifyLength.setInt(2, lid);
+					modifyLength.execute();
+
+					conn.commit();
+
+					System.out.println("Successfully modified lease");
+				} else {
+					System.out.println("Invalid lease ID. Please try again");
+				}
+			}
+		}
+	}
+
+	private void leaseReg() throws IOException, ExitException, SQLException, MenuException, TooManyTriesException {
 		System.out.println("New Lease Registration:");
 		System.out.println();
 		String first = input.getPrompt("First Name: ");

@@ -1,6 +1,10 @@
 package numa.Portals;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import numa.Reader;
 import numa.Exceptions.*;
@@ -29,5 +33,18 @@ public class Portal {
 	public void sessionReset(Reader input) throws IOException, ExitException, MenuException {
 		while (true)
 			input.getMenuLine("Enter 'm' to return to the main menu or 'q' to quit the program: ");
+	}
+
+	public int getMonths(Date start, Date end) throws SQLException {
+		Calendar startTime = new GregorianCalendar();
+		Calendar endTime = new GregorianCalendar();
+
+		startTime.setTime(start);
+		endTime.setTime(end);
+
+		int yearDiff = endTime.get(Calendar.YEAR) - startTime.get(Calendar.YEAR);
+		int monthDiff = endTime.get(Calendar.MONTH) - startTime.get(Calendar.MONTH);
+
+		return yearDiff * 12 + monthDiff;
 	}
 }
