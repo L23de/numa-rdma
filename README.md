@@ -4,6 +4,17 @@ Semester-long project for Lehigh's Spring 2022 CSE 241 course. The goal is to
 design a robust database along with separate interfaces for different access
 levels at a fictional company, Northside Uncommons Management of Apartments (NUMA).
 
+## Usage
+
+Requirements:
+
+- Java 8
+- Gradle
+- Oracle SQL Database
+- Python3 (For data generation)
+
+To start the application, run `make` or `make all`
+
 ## Directory Structure
 
 ```dir
