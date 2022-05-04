@@ -220,7 +220,7 @@ public class ManagementPortal extends Portal {
 		System.out.println();
 		String first = input.getPrompt("First Name: ");
 		first = first.substring(0, 1) + first.substring(1);
-		Person person = checkPersonExists(first);
+		Person person = checkPersonExists(first, true);
 
 		// If a new person needs to be registered in the database
 		if (person.id == -1) {
@@ -228,16 +228,6 @@ public class ManagementPortal extends Portal {
 		}
 
 		String ssn = input.getPrompt("Social Security Number (###-##-####): ");
-		try (
-			PreparedStatement addRenterInfo = conn.prepareStatement("insert into renter_info values(?, ?, ?)");
-		) {
-			addRenterInfo.setInt(1, person.id);
-			addRenterInfo.setString(2, ssn);
-			addRenterInfo.setNull(3, Types.NULL);
-
-			addRenterInfo.execute();
-			conn.commit();
-		}
 		
 		System.out.println("Lease Info: ");
 		int propId = input.getMenuInt("Property ID: ");
@@ -245,18 +235,19 @@ public class ManagementPortal extends Portal {
 		int term_length = input.getMenuInt("Term Length: ");
 
 		try (
-			CallableStatement add = this.conn.prepareCall("{call sign_lease(?, ?, ?, ?, ?)}");
+			CallableStatement add = this.conn.prepareCall("{call sign_lease(?, ?, ?, ?, ?, ?)}");
 		) {
 			add.setInt(1, person.id);
 			add.setInt(2, propId);
 			add.setString(3, apt);
 			add.setInt(4, term_length);
-			add.registerOutParameter(5, Types.INTEGER);
+			add.setString(5, ssn);
+			add.registerOutParameter(6, Types.INTEGER);
 
 			
 			add.execute();
 			conn.commit();
-			int ret = add.getInt(5);
+			int ret = add.getInt(6);
 
 			if (ret == -2) {
 				System.out.format("Apt %s does not exist\n", apt);
@@ -267,7 +258,7 @@ public class ManagementPortal extends Portal {
 			}
 		}
 
-		System.out.format("Lease for Apt %s successfully signed to %s %s\n", apt, person.first_name, person.last_name);
+		System.out.format("Lease for Apt %s successfully signed to %s %s [PID: %d]\n", apt, person.first_name, person.last_name, person.id);
 		System.out.println("Please inform the tenant to setup payment details EOD in the Resident Portal");
 	}
 
@@ -276,10 +267,29 @@ public class ManagementPortal extends Portal {
 		System.out.println();
 		String first = input.getPrompt("First Name: ");
 		first = first.substring(0, 1) + first.substring(1);
-		Person person = checkPersonExists(first);
+		Person person = checkPersonExists(first, false);
 
 		if (person.id == -1) {
 			person = addPerson(first);
+		}
+
+		try (
+			PreparedStatement registerVisit = conn.prepareStatement("INSERT into visited(person_id, date_visited, prop_id, apt) VALUES(?, CURRENT_TIMESTAMP, ?, ?)");
+		) {
+			int pid = input.getMenuInt("Property ID: ");
+			String apt = input.getPrompt("Apartment: ");
+			
+			registerVisit.setInt(1, person.id);
+			registerVisit.setInt(2, pid);
+			registerVisit.setString(3, apt);
+
+			registerVisit.execute();
+			conn.commit();
+
+			System.out.println("Successfully registered visit");
+		} catch (SQLException e) {
+			System.out.println(e);
+			// System.out.println("Error registering visit. Person has been added to records. Please try registering the visit again");
 		}
 	}
 
@@ -332,14 +342,24 @@ public class ManagementPortal extends Portal {
 		conn.commit();
 	}
 
-	private Person checkPersonExists(String first_name) throws SQLException, IOException, ExitException, MenuException, TooManyTriesException {
+	private Person checkPersonExists(String first_name, Boolean renter) throws SQLException, IOException, ExitException, MenuException, TooManyTriesException {
 		try (
-			PreparedStatement checkFirst = conn.prepareStatement(
+			PreparedStatement checkRenter = conn.prepareStatement(
 				"select id, first_name, last_name, age, ssn, phone_number, email, credit_score from person left outer join renter_info on person.id = renter_info.person_id where person_id is null and first_name = ?"
 			);
+
+			PreparedStatement checkPerson = conn.prepareStatement("select id, first_name, last_name, age, ssn, phone_number, email, credit_score from person left outer join renter_info on person.id = renter_info.person_id where first_name = ?");
 		) {
-			checkFirst.setString(1, first_name);
-			ResultSet people = checkFirst.executeQuery();
+
+			ResultSet people = null;
+			if (!renter) {
+				checkPerson.setString(1, first_name);
+				people = checkPerson.executeQuery();
+			} else {
+				checkRenter.setString(1, first_name);
+				people = checkRenter.executeQuery();
+			}
+
 			ArrayList<Person> matchedPeople = new ArrayList<Person>();
 			int counter = 0;
 
