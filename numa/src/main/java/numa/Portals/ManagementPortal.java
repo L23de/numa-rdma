@@ -111,93 +111,90 @@ public class ManagementPortal extends Portal {
 				System.out.println(BOLD_ON + "Properties:" + BOLD_OFF);
 				System.out.println(outStr);
 				
-				String prompt = String.format(
-					"View apartments under a property [1-%s], 'a' to add a property, 'm' to menu or 'q' to quit: ", 
-					counter
-				);
-				String action = input.getPrompt(prompt).toLowerCase().replaceAll("\\s+","");
+				while(true) {
 
-				try (
-					PreparedStatement getApts = conn.prepareStatement("select * from apartment where prop_id = ?");
-				) {
-					int propId = Integer.parseInt(action);
-					getApts.setInt(1, propId);
-					ResultSet aptRes = getApts.executeQuery();
-					ArrayList<Apartment> aptList = new ArrayList<Apartment>();
-
-					
-					System.out.format(
-						"%s%s Apartments:%s\n",
-						BOLD_ON,
-						props.get(counter - 1).toString(),
-						BOLD_OFF
+					String prompt = String.format(
+						"View apartments under a property [1-%s], 'a' to add a property, 'm' to menu or 'q' to quit: ", 
+						counter
 					);
+					String action = input.getPrompt(prompt).toLowerCase().replaceAll("\\s+","");
+
+					try (
+						PreparedStatement getApts = conn.prepareStatement("select * from apartment where prop_id = ?");
+					) {
+						int propId = Integer.parseInt(action);
+						getApts.setInt(1, propId);
+						ResultSet aptRes = getApts.executeQuery();
+						ArrayList<Apartment> aptList = new ArrayList<Apartment>();
+
 						
-					counter = 0;
-					while (aptRes.next()) {
-						int prop_id = aptRes.getInt("prop_id");
-						String apt = aptRes.getString("apt");
-						int square_footage = aptRes.getInt("square_footage");
-						int bed_count = aptRes.getInt("bed_count");
-						float bath_count = aptRes.getFloat("bath_count");
-						int rent = aptRes.getInt("rent");
-
-						Apartment tmp = new Apartment(prop_id, apt, square_footage, bed_count, bath_count, rent);
-						aptList.add(tmp);
 						System.out.format(
-							"[%d] %s\n",
-							++counter, 
-							aptList.get(counter - 1).apt
+							"%s%s Apartments:%s\n",
+							BOLD_ON,
+							props.get(counter - 1).toString(),
+							BOLD_OFF
 						);
-					}
+							
+						counter = 0;
+						while (aptRes.next()) {
+							int prop_id = aptRes.getInt("prop_id");
+							String apt = aptRes.getString("apt");
+							int square_footage = aptRes.getInt("square_footage");
+							int bed_count = aptRes.getInt("bed_count");
+							float bath_count = aptRes.getFloat("bath_count");
+							int rent = aptRes.getInt("rent");
 
-					System.out.println();
+							Apartment tmp = new Apartment(prop_id, apt, square_footage, bed_count, bath_count, rent);
+							aptList.add(tmp);
+							System.out.format(
+								"[%d] %s\n",
+								++counter, 
+								aptList.get(counter - 1).apt
+							);
+						}
 
-					int aptIndex = -1;
+						System.out.println();
 
-					while (true) {
-						prompt = String.format(
-							"View apartment details [1-%d], 'a' to add apartments, 'm' to menu or 'q' to quit: ",
-							counter
-						);
-						try {
-							String choice = input.getPrompt(prompt);
+						int aptIndex = -1;
 
-							aptIndex = Integer.parseInt(choice);
-							if (aptIndex > 0 && aptIndex <= counter) {
-								// Show apt specific info
-								System.out.println(aptList.get(aptIndex - 1).toString());
-								break;
-							} else {
-								System.out.println("Invalid input. Try again\n");
-							}
-						} catch (NumberFormatException e) {
-							switch (action) {
-								case "a": 
-									// TODO: Bulk add apartments (Same as properties, set property ID)
+						while (true) {
+							prompt = String.format(
+								"View apartment details [1-%d], 'a' to add apartments, 'm' to menu or 'q' to quit: ",
+								counter
+							);
+							try {
+								String choice = input.getPrompt(prompt);
+								aptIndex = Integer.parseInt(choice);
+								if (aptIndex > 0 && aptIndex <= counter) {
+									// Show apt specific info
+									System.out.println(aptList.get(aptIndex - 1).toString());
 									break;
-								case "m": throw new MenuException();
-								case "q": throw new ExitException();
-								default: 
+								} else {
 									System.out.println("Invalid input. Try again\n");
-									System.out.println();
+								}
+							} catch (NumberFormatException e) {
+								switch (action) {
+									case "m": throw new MenuException();
+									case "q": throw new ExitException();
+									default: 
+										System.out.println("Invalid input. Try again\n");
+								}
 							}
 						}
-					}
-					System.out.println();
+						System.out.println();
+						break;
 
-				} catch (NumberFormatException e ) {
-					switch (action) {
-						// "a": // Bulk add properties
-						case "m": throw new MenuException();
-						case "q": throw new ExitException();
-						default: 
-						System.out.println("Invalid input. Try again\n");
-							System.out.println();
+					} catch (NumberFormatException e ) {
+						switch (action) {
+							// "a": // Bulk add properties
+							case "m": throw new MenuException();
+							case "q": throw new ExitException();
+							default: 
+							System.out.println("Invalid input. Try again\n");
 						}
-					}
+						}
+				}
 			}
-			System.out.println();
 		}
 	}
 

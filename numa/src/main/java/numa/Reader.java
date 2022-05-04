@@ -56,18 +56,18 @@ public class Reader extends BufferedReader {
 	}
 
 	/** Used for non-menu inputs that allows for input validation */
-	public String getPrompt(String prompt, Validate validation) throws IOException, ExitException, MenuException, TooManyTriesException {
-		int i = 0;
-		while (i++ < MAX_TRIES) {
-			System.out.print(prompt);
-			String input = super.readLine();
-			System.out.println();
-			Validated res = validation.validate(input);
-			if (res.valid) {
-				return res.validated;
-			}
-			System.out.println(res.errMsg);
-		}
-		throw new TooManyTriesException();
-	}
+	// public String getPrompt(String prompt, Validate validation) throws IOException, ExitException, MenuException, TooManyTriesException {
+	// 	int i = 0;
+	// 	while (i++ < MAX_TRIES) {
+	// 		System.out.print(prompt);
+	// 		String input = super.readLine();
+	// 		System.out.println();
+	// 		Validated res = validation.validate(input);
+	// 		if (res.valid) {
+	// 			return res.validated;
+	// 		}
+	// 		System.out.println(res.errMsg);
+	// 	}
+	// 	throw new TooManyTriesException();
+	// }
 }

@@ -8,10 +8,25 @@ levels at a fictional company, Northside Uncommons Management of Apartments (NUM
 
 ```dir
 .
-├── setup.sql                   # Driver script to setup the database relations
-├── shutdown.sql                # Script to bring down the entire database
-├── triggers/                   # Holds the individual trigger scripts
-├── mock/                       # CSV files containing mock data for populating the database
+├── db/                       	# Static files for configuring the database [Some scripts are outdated]
+|	├── setup.sql				# Brings up the database from scratch
+|	├── shutdown.sql			# Shuts down the database taking into account dependencies
+|	├── generate.py				# Generate data
+|	├── sqlconvert.py			# Converts generated data to SQL statements
+|	├── mock/					# Store for generated data
+|	├── function/				# PL/SQL Functions
+|	├── procedures/				# PL/SQL Procedures
+|	├── triggers/				# SQL Triggers
+|	├── types/					# SQL Custom Defined Types
+|	├── queries/				# Queries used in the console
+|	└── updates/				# Database updated used in the console
+|
+├── numa/src/main/java/numa		# NUMA Console Source Files
+|	├── NUMA.java				# Main Driver
+|	├── Reader.java				# Console in reader
+|	├── Portals/				# Handles all the portal activities
+|	└── Exceptions/				# Custom exceptions
+|
 ├── Schema.pdf                  # Database Schema Diagram
 ├── .git/
 ├── .gitignore
@@ -34,8 +49,21 @@ The following schemas were generated using the aid of [Mockaroo](https://www.moc
 
 ### Test Data
 
+Below is some pre-populated data that can be used for testing purposes
 
-> Note: Not all mock data has been updated. Some of the data values were manually converted to use PL/SQL Procedures/Functions once they were implemented
+Properties:
+![Properties Data](images/property.png)
+
+Apartments:
+![Apartment Data](images/apartments.png)
+
+People:
+![People Data](images/person.png)
+
+Leases:
+![Lease Data](images/lease.png)
+
+> Note: Not all mock data scripts have been updated. Some of the data values were manually converted to use PL/SQL Procedures/Functions that were implemented later on
 
 ## Functions
 
@@ -44,13 +72,16 @@ The following schemas were generated using the aid of [Mockaroo](https://www.moc
 	- Make Payment - View upcoming payments and pay for them
 	- My Lease Details - View details about their lease and their personal information
 
-- Management Portal
+- Management Portal (Requires sign-in with a valid PIN)
+  - Properties - View properties and apartment details
+  - People - View personal information of people on file
+  - Lease - Create a new lease or modify a single lease's length
+  - Visits - Register a person's tour of an apartment (Add's person information if they don't already exist)
+  - Change PIN - change Management Portal's PIN)
 
 ### Assumptions
 
-- 
-
-
-## Dev Notes
-
-- When a user logins to the system, the system should automatically create a view for that user that only represents the info that they can see. All queries will be used on that
+- Payments are made in full (Even for outstanding, late payments)
+- Late payments don't have late fees
+- Only one lease can be signed to each resident
+- Everyone on a lease is treated the same (There are no primary signees)
