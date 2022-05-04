@@ -1,4 +1,4 @@
-CREATE OR REPLACE PROCEDURE add_person_to_lease (
+create or replace PROCEDURE add_person_to_lease (
 	pid IN person.id%type,
 	lid IN lease.id%type,
 	success OUT number
@@ -20,3 +20,5 @@ BEGIN
 	INSERT INTO person_on_lease VALUES(lid, pid);
 	success := 0;
 END;
+
+

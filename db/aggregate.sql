@@ -8,72 +8,72 @@ insert into admin (pin
 -- TABLE: property
 -- Schema: street_name,city,state,zipcode
 insert into property (street_name,city,state,zipcode
-) values('51459 Chive Point','Allentown','PA','31787');
+) values('4107 Evergreen Terrace','Laurel','MD','38934');
 insert into property (street_name,city,state,zipcode
-) values('35 Luster Place','Seattle','WA','13787');
+) values('8 Kedzie Pass','Huntington','WV','89541');
 
 
 
 -- TABLE: person
 -- Schema: first_name,last_name,age,phone_number,email,credit_score
 insert into person (first_name,last_name,age,phone_number,email,credit_score
-) values('Devlin','Gregorowicz',20,'066-582-9402','dgregorowicz0@istockphoto.com','648');
+) values('Keven','Haresnaip',62,'734-309-9756','kharesnaip0@symantec.com','839');
 insert into person (first_name,last_name,age,phone_number,email,credit_score
-) values('Molly','Caldwall',30,'182-192-5822','mcaldwall1@moonfruit.com','555');
+) values('Dolph','Porker',41,'873-657-3429','dporker1@pinterest.com','456');
 insert into person (first_name,last_name,age,phone_number,email,credit_score
-) values('Clerc','Standidge',37,'302-100-1374','cstandidge2@joomla.org','704');
+) values('Pail','Hizir',30,'234-499-2712','phizir2@youku.com','756');
 insert into person (first_name,last_name,age,phone_number,email,credit_score
-) values('Codi','Herries',47,'406-234-7644','cherries3@odnoklassniki.ru','742');
+) values('Esra','Gowrie',23,'673-030-4088','egowrie3@meetup.com','409');
 insert into person (first_name,last_name,age,phone_number,email,credit_score
-) values('Livia','Lambkin',25,'520-790-3126','llambkin4@webs.com','794');
+) values('Nickola','Woosnam',56,'729-084-8887','nwoosnam4@google.es','838');
 insert into person (first_name,last_name,age,phone_number,email,credit_score
-) values('Rodrick','Threadgill',64,'397-948-7107','rthreadgill5@nature.com','441');
+) values('Devina','Hawkeswood',54,'366-058-9031','dhawkeswood5@usgs.gov','696');
 insert into person (first_name,last_name,age,phone_number,email,credit_score
-) values('Lauryn','Pethrick',63,'815-517-0123','lpethrick6@newyorker.com','498');
+) values('Amandi','Finnis',45,'344-046-8713','afinnis6@accuweather.com','591');
 insert into person (first_name,last_name,age,phone_number,email,credit_score
-) values('Pam','Habishaw',41,'046-979-7546','phabishaw7@bloomberg.com','306');
+) values('Osborne','Padefield',27,'311-653-0690','opadefield7@yellowpages.com','836');
 insert into person (first_name,last_name,age,phone_number,email,credit_score
-) values('Avie','Everson',68,'752-659-8000','aeverson8@squidoo.com','707');
+) values('Rodger','Blaxeland',20,'287-593-1810','rblaxeland8@xrea.com','682');
 insert into person (first_name,last_name,age,phone_number,email,credit_score
-) values('Hermina','Blyth',19,'283-706-9469','hblyth9@hud.gov','335');
+) values('Modesta','Antoniou',50,'898-774-6287','mantoniou9@google.com','816');
 
 
 
 -- TABLE: pet
 -- Schema: animal,pet_name
 insert into pet (animal,pet_name
-) values('Cat','Eddie');
+) values('Parrot','Dal');
 insert into pet (animal,pet_name
-) values('Cat','Akim');
+) values('Fish','Andria');
 insert into pet (animal,pet_name
-) values('Parrot','Ric');
+) values('Fish','Trip');
 
 
 
 -- TABLE: pay_card
 -- Schema: first_name,last_name,card_num,exp_date,cvv,pin
 insert into pay_card (first_name,last_name,card_num,exp_date,cvv,pin
-) values('Kevyn','Mayoh','5108754076799230','32/3204','966','6781');
+) values('Rudy','Fante','5048370584957294','50/5522','646',NULL);
 insert into pay_card (first_name,last_name,card_num,exp_date,cvv,pin
-) values('Matteo','Isacq','5048372799732009','04/6381','163','2611');
+) values('Marnia','Mansford','5108759345991526','58/8654','758',NULL);
 
 
 
 -- TABLE: venmo
 -- Schema: handle
 insert into venmo (handle
-) values('@kcarriage0');
+) values('@jmatysiak0');
 insert into venmo (handle
-) values('@mantoons1');
+) values('@lblenkensop1');
 
 
 
 -- TABLE: ach
 -- Schema: acct_num,routing_num,bank_name
 insert into ach (acct_num,routing_num,bank_name
-) values('06381556560670632','576862305','TD Bank');
+) values('98520980505477001','417581764','Chase');
 insert into ach (acct_num,routing_num,bank_name
-) values('96590697692043733','264977341','BoA');
+) values('63441178839518856','777728260','Citi');
 
 
 
@@ -82,13 +82,13 @@ insert into ach (acct_num,routing_num,bank_name
 insert into payment_method (person_id,card_id,venmo_id,ach_id
 ) values(1,1,NULL,NULL);
 insert into payment_method (person_id,card_id,venmo_id,ach_id
-) values(8,2,NULL,NULL);
+) values(7,2,NULL,NULL);
 insert into payment_method (person_id,card_id,venmo_id,ach_id
-) values(6,NULL,1,NULL);
+) values(7,NULL,1,NULL);
 insert into payment_method (person_id,card_id,venmo_id,ach_id
-) values(1,NULL,2,NULL);
+) values(8,NULL,2,NULL);
 insert into payment_method (person_id,card_id,venmo_id,ach_id
-) values(4,NULL,NULL,1);
+) values(2,NULL,NULL,1);
 insert into payment_method (person_id,card_id,venmo_id,ach_id
 ) values(5,NULL,NULL,2);
 
@@ -97,157 +97,152 @@ insert into payment_method (person_id,card_id,venmo_id,ach_id
 -- TABLE: apartment
 -- Schema: prop_id,apt,square_footage,bed_count,bath_count,rent
 insert into apartment (prop_id,apt,square_footage,bed_count,bath_count,rent
-) values(2,'C103','878',3,'1.5','1900');
+) values(1,'C186','1577',5,'3.5','4500');
 insert into apartment (prop_id,apt,square_footage,bed_count,bath_count,rent
-) values(2,'A337','1536',2,'1.5','3600');
+) values(2,'C382','2021',5,3,'4800');
 insert into apartment (prop_id,apt,square_footage,bed_count,bath_count,rent
-) values(1,'B342','1105',3,'1.5','1300');
+) values(2,'C8','1305',4,'1.5','2600');
 insert into apartment (prop_id,apt,square_footage,bed_count,bath_count,rent
-) values(1,'C365','1249',1,'3.5','3000');
+) values(1,'B75','1475',2,'2.5','2500');
 insert into apartment (prop_id,apt,square_footage,bed_count,bath_count,rent
-) values(1,'B75','997',1,'1.5','2400');
+) values(1,'B391','930',3,'3.5','1300');
 insert into apartment (prop_id,apt,square_footage,bed_count,bath_count,rent
-) values(1,'D300','1563',4,'1.5','3900');
+) values(1,'B364','1079',5,'3.5','1500');
 insert into apartment (prop_id,apt,square_footage,bed_count,bath_count,rent
-) values(2,'A433','1796',1,'2.5','4600');
+) values(2,'D424','1664',1,'2.5','5100');
 insert into apartment (prop_id,apt,square_footage,bed_count,bath_count,rent
-) values(2,'D376','884',4,'2.5','1100');
+) values(2,'C7','1993',4,'2.5','2600');
 insert into apartment (prop_id,apt,square_footage,bed_count,bath_count,rent
-) values(2,'A445','1425',5,'2.5','4100');
+) values(1,'A88','1201',5,3,'1600');
 insert into apartment (prop_id,apt,square_footage,bed_count,bath_count,rent
-) values(1,'A71','2016',2,'2.5','6000');
+) values(2,'C20','2006',4,'1.5','5600');
 
 
 
 -- TABLE: prop_amenity
 -- Schema: prop_id,amenity,cost
 insert into prop_amenity (prop_id,amenity,cost
-) values(1,'Swimming Pool',44);
+) values(1,'Swimming Pool',33);
 insert into prop_amenity (prop_id,amenity,cost
-) values(2,'Gym',32);
+) values(1,'Gym',21);
 insert into prop_amenity (prop_id,amenity,cost
-) values(2,'City Shuttle',28);
+) values(2,'Parking',70);
+insert into prop_amenity (prop_id,amenity,cost
+) values(2,'Swimming Pool',11);
+insert into prop_amenity (prop_id,amenity,cost
+) values(2,'City Shuttle',30);
 
 
 
 -- TABLE: apt_amenity
 -- Schema: prop_id,apt,amenity,cost
 insert into apt_amenity (prop_id,apt,amenity,cost
-) values(2,'A337','Furnished',51);
+) values(1,'C186','Balcony',27);
 insert into apt_amenity (prop_id,apt,amenity,cost
-) values(1,'B342','In-house Laundry',38);
+) values(1,'C186','TV+Cable Included',45);
 insert into apt_amenity (prop_id,apt,amenity,cost
-) values(1,'B342','Furnished',74);
+) values(1,'C186','In-house Laundry',35);
 insert into apt_amenity (prop_id,apt,amenity,cost
-) values(1,'B342','TV+Cable Included',49);
+) values(2,'C382','Balcony',30);
 insert into apt_amenity (prop_id,apt,amenity,cost
-) values(1,'C365','TV+Cable Included',42);
+) values(2,'C8','Furnished',78);
 insert into apt_amenity (prop_id,apt,amenity,cost
-) values(1,'D300','TV+Cable Included',29);
+) values(2,'C8','Balcony',28);
 insert into apt_amenity (prop_id,apt,amenity,cost
-) values(1,'D300','Balcony',40);
+) values(1,'B75','TV+Cable Included',31);
 insert into apt_amenity (prop_id,apt,amenity,cost
-) values(1,'D300','In-house Laundry',32);
+) values(1,'B75','Balcony',22);
 insert into apt_amenity (prop_id,apt,amenity,cost
-) values(2,'D376','TV+Cable Included',49);
+) values(1,'B391','In-house Laundry',31);
 insert into apt_amenity (prop_id,apt,amenity,cost
-) values(2,'D376','Balcony',33);
+) values(1,'B391','Furnished',63);
 insert into apt_amenity (prop_id,apt,amenity,cost
-) values(2,'A445','In-house Laundry',38);
+) values(1,'B391','Balcony',25);
+insert into apt_amenity (prop_id,apt,amenity,cost
+) values(1,'B364','In-house Laundry',25);
+insert into apt_amenity (prop_id,apt,amenity,cost
+) values(1,'B364','TV+Cable Included',47);
+insert into apt_amenity (prop_id,apt,amenity,cost
+) values(1,'B364','Furnished',50);
+insert into apt_amenity (prop_id,apt,amenity,cost
+) values(2,'D424','Furnished',88);
+insert into apt_amenity (prop_id,apt,amenity,cost
+) values(2,'D424','TV+Cable Included',30);
+insert into apt_amenity (prop_id,apt,amenity,cost
+) values(2,'D424','Balcony',29);
+insert into apt_amenity (prop_id,apt,amenity,cost
+) values(2,'C7','Balcony',23);
+insert into apt_amenity (prop_id,apt,amenity,cost
+) values(2,'C20','Balcony',32);
+insert into apt_amenity (prop_id,apt,amenity,cost
+) values(2,'C20','In-house Laundry',32);
 
 
 
 -- TABLE: visited
 -- Schema: person_id,date_visited,prop_id,apt
 insert into visited (person_id,date_visited,prop_id,apt
-) values(1,to_date('10/29/2021', 'MM/DD/YYYY'),2,'A445');
+) values(1,to_date('01/20/2022', 'MM/DD/YYYY'),1,'B391');
 insert into visited (person_id,date_visited,prop_id,apt
-) values(2,to_date('01/25/2022', 'MM/DD/YYYY'),1,'C365');
+) values(1,to_date('12/09/2021', 'MM/DD/YYYY'),2,'C8');
 insert into visited (person_id,date_visited,prop_id,apt
-) values(4,to_date('05/15/2021', 'MM/DD/YYYY'),2,'A337');
+) values(2,to_date('07/04/2021', 'MM/DD/YYYY'),2,'C8');
 insert into visited (person_id,date_visited,prop_id,apt
-) values(5,to_date('05/30/2021', 'MM/DD/YYYY'),1,'B75');
+) values(3,to_date('01/07/2022', 'MM/DD/YYYY'),1,'A88');
 insert into visited (person_id,date_visited,prop_id,apt
-) values(5,to_date('02/08/2022', 'MM/DD/YYYY'),2,'A337');
+) values(3,to_date('04/18/2021', 'MM/DD/YYYY'),2,'C7');
 insert into visited (person_id,date_visited,prop_id,apt
-) values(6,to_date('06/20/2021', 'MM/DD/YYYY'),2,'D376');
+) values(3,to_date('04/25/2021', 'MM/DD/YYYY'),2,'C382');
 insert into visited (person_id,date_visited,prop_id,apt
-) values(6,to_date('12/18/2021', 'MM/DD/YYYY'),1,'B342');
+) values(4,to_date('10/25/2021', 'MM/DD/YYYY'),2,'C7');
 insert into visited (person_id,date_visited,prop_id,apt
-) values(7,to_date('07/10/2021', 'MM/DD/YYYY'),2,'D376');
+) values(4,to_date('12/08/2021', 'MM/DD/YYYY'),2,'C8');
 insert into visited (person_id,date_visited,prop_id,apt
-) values(7,to_date('09/26/2021', 'MM/DD/YYYY'),2,'A337');
+) values(4,to_date('01/02/2022', 'MM/DD/YYYY'),1,'B75');
 insert into visited (person_id,date_visited,prop_id,apt
-) values(7,to_date('10/28/2021', 'MM/DD/YYYY'),2,'A445');
+) values(5,to_date('08/10/2021', 'MM/DD/YYYY'),1,'B364');
 insert into visited (person_id,date_visited,prop_id,apt
-) values(8,to_date('02/11/2022', 'MM/DD/YYYY'),1,'B342');
+) values(6,to_date('02/16/2022', 'MM/DD/YYYY'),1,'B391');
 insert into visited (person_id,date_visited,prop_id,apt
-) values(8,to_date('10/30/2021', 'MM/DD/YYYY'),2,'A433');
+) values(6,to_date('03/15/2022', 'MM/DD/YYYY'),1,'B75');
 insert into visited (person_id,date_visited,prop_id,apt
-) values(8,to_date('06/22/2021', 'MM/DD/YYYY'),2,'D376');
+) values(7,to_date('10/02/2021', 'MM/DD/YYYY'),1,'B391');
 insert into visited (person_id,date_visited,prop_id,apt
-) values(9,to_date('07/25/2021', 'MM/DD/YYYY'),1,'A71');
+) values(7,to_date('03/16/2022', 'MM/DD/YYYY'),1,'C186');
 insert into visited (person_id,date_visited,prop_id,apt
-) values(10,to_date('03/13/2022', 'MM/DD/YYYY'),1,'A71');
-
-
-
--- TABLE: prev_addr
--- Schema: person_id,street_name,city,state,zipcode
-insert into prev_addr (person_id,street_name,city,state,zipcode
-) values(10,'60 Macpherson Trail','El Paso','TX','69429');
-insert into prev_addr (person_id,street_name,city,state,zipcode
-) values(5,'785 Oak Valley Place','Boston','MA','20075');
-insert into prev_addr (person_id,street_name,city,state,zipcode
-) values(4,'36631 Basil Junction','Detroit','MI','90014');
-insert into prev_addr (person_id,street_name,city,state,zipcode
-) values(2,'1808 Service Avenue','Tucson','AZ','47692');
-insert into prev_addr (person_id,street_name,city,state,zipcode
-) values(7,'44 Esker Street','Boston','MA','18190');
-insert into prev_addr (person_id,street_name,city,state,zipcode
-) values(8,'229 La Follette Way','Sacramento','CA','63697');
-insert into prev_addr (person_id,street_name,city,state,zipcode
-) values(2,'46443 Summer Ridge Terrace','Dallas','TX','93722');
-insert into prev_addr (person_id,street_name,city,state,zipcode
-) values(9,'36 Arkansas Point','Hyattsville','MD','70139');
-insert into prev_addr (person_id,street_name,city,state,zipcode
-) values(3,'1 Hermina Avenue','Torrance','CA','26764');
-insert into prev_addr (person_id,street_name,city,state,zipcode
-) values(1,'29 Lawn Terrace','Fort Wayne','IN','76368');
-insert into prev_addr (person_id,street_name,city,state,zipcode
-) values(7,'830 Rowland Road','Billings','MT','71641');
-insert into prev_addr (person_id,street_name,city,state,zipcode
-) values(10,'9385 Cambridge Junction','Long Beach','CA','07986');
+) values(9,to_date('08/22/2021', 'MM/DD/YYYY'),1,'B75');
 
 
 
 -- TABLE: renter_info
 -- Schema: person_id,ssn,preferred_payment
 insert into renter_info (person_id,ssn,preferred_payment
-) values(2,'597-83-1351',2);
+) values(10,'574-81-9236',2);
 insert into renter_info (person_id,ssn,preferred_payment
-) values(8,'650-72-7933',6);
+) values(8,'120-19-8737',4);
 insert into renter_info (person_id,ssn,preferred_payment
-) values(1,'754-13-3580',3);
+) values(8,'285-60-1054',3);
 insert into renter_info (person_id,ssn,preferred_payment
-) values(8,'735-53-4041',4);
+) values(9,'173-60-1061',1);
 insert into renter_info (person_id,ssn,preferred_payment
-) values(2,'880-54-6772',4);
+) values(9,'318-47-0126',6);
 
 
 
 -- TABLE: lease
 -- Schema: prop_id,apt,start_date,term_length,rent_amount
 insert into lease (prop_id,apt,start_date,term_length,rent_amount
-) values(1,'B75',to_date('11/18/2021', 'MM/DD/YYYY'),18,'2400');
+) values(1,'A88',to_date('03/18/2022', 'MM/DD/YYYY'),48,'1600');
 insert into lease (prop_id,apt,start_date,term_length,rent_amount
-) values(2,'A445',to_date('07/28/2021', 'MM/DD/YYYY'),24,'4100');
+) values(1,'B391',to_date('11/16/2021', 'MM/DD/YYYY'),60,'1300');
 insert into lease (prop_id,apt,start_date,term_length,rent_amount
-) values(1,'A71',to_date('08/04/2021', 'MM/DD/YYYY'),30,'6000');
+) values(2,'C7',to_date('12/18/2021', 'MM/DD/YYYY'),12,'2600');
 insert into lease (prop_id,apt,start_date,term_length,rent_amount
-) values(2,'C103',to_date('10/17/2021', 'MM/DD/YYYY'),18,'1900');
+) values(2,'C8',to_date('10/10/2021', 'MM/DD/YYYY'),48,'2600');
 insert into lease (prop_id,apt,start_date,term_length,rent_amount
-) values(2,'A337',to_date('08/04/2021', 'MM/DD/YYYY'),30,'3600');
+) values(1,'B75',to_date('06/12/2021', 'MM/DD/YYYY'),12,'2500');
+insert into lease (prop_id,apt,start_date,term_length,rent_amount
+) values(2,'C382',to_date('10/07/2021', 'MM/DD/YYYY'),30,'4800');
 
 
 
@@ -256,9 +251,9 @@ insert into lease (prop_id,apt,start_date,term_length,rent_amount
 insert into pet_on_lease (lease_id,pet_id
 ) values(3,1);
 insert into pet_on_lease (lease_id,pet_id
-) values(4,2);
+) values(1,2);
 insert into pet_on_lease (lease_id,pet_id
-) values(5,3);
+) values(4,3);
 
 
 
@@ -267,13 +262,13 @@ insert into pet_on_lease (lease_id,pet_id
 insert into person_on_lease (lease_id,person_id
 ) values(1,8);
 insert into person_on_lease (lease_id,person_id
-) values(2,1);
+) values(2,9);
 insert into person_on_lease (lease_id,person_id
-) values(3,2);
+) values(3,8);
 insert into person_on_lease (lease_id,person_id
-) values(4,2);
+) values(4,1);
 insert into person_on_lease (lease_id,person_id
-) values(5,8);
+) values(5,9);
 
 
 

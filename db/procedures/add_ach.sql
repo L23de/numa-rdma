@@ -1,4 +1,4 @@
-CREATE OR REPLACE PROCEDURE add_ach (
+create or replace PROCEDURE add_ach (
 		person_id payment_method.person_id%type,
 		acct_num ach.acct_num%type,
 		routing_num ach.routing_num%type,
@@ -12,3 +12,5 @@ CREATE OR REPLACE PROCEDURE add_ach (
 		INSERT INTO payment_method(person_id, card_id, venmo_id, ach_id) VALUES(person_id, NULL, NULL, ach_id);
 	END;
 
+
+	

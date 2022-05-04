@@ -231,6 +231,16 @@ class Person implements Objects {
 	String email;
 	int credit_score;
 
+	static String sqlPrefix = String.format(
+			"select " +
+			"person.id as id, first_name, last_name, ssn, age, phone_number, email, credit_score, apt " +
+			"from " +
+			"(((person left outer join renter_info on renter_info.person_id = person.id) " + 
+			"natural left outer join person_on_lease) " +
+			"left outer join lease on lease_id = lease.id)" + 
+			"natural left outer join apartment "
+		);
+
 	public Person(boolean valid) {
 		this.id = -1;
 	}
@@ -260,10 +270,10 @@ class Person implements Objects {
 		return outStr;
 	}
 
-	public static void searchName(String prefix, Connection conn, Reader input, boolean verbose) throws SQLException, IOException, ExitException {
-		prefix += "where first_name = ? or last_name = ?";
+	public static void searchName(Connection conn, Reader input, boolean verbose) throws SQLException, IOException, ExitException {
+		String stmt = sqlPrefix + "where first_name = ? or last_name = ?";
 		try (
-			PreparedStatement searchName = conn.prepareStatement(prefix);
+			PreparedStatement searchName = conn.prepareStatement(stmt);
 		) {
 			String name = input.getPrompt("First or Last Name: ");
 			name = name.substring(0, 1).toUpperCase() + name.substring(1);
@@ -272,6 +282,7 @@ class Person implements Objects {
 			searchName.setString(2, name);
 
 			ResultSet people = searchName.executeQuery();
+			Person tmp = null;
 			while (people.next()) {
 				int id = people.getInt("id");
 				String first = people.getString("first_name");
@@ -283,7 +294,7 @@ class Person implements Objects {
 				int credit_score = people.getInt("credit_score");
 				String apt = people.getString("apt");
 
-				Person tmp = new Person(id, first, last, ssn, age, phone_num, email, credit_score);
+				tmp = new Person(id, first, last, ssn, age, phone_num, email, credit_score);
 
 				System.out.println(tmp.toString());
 				if (apt != null) {
@@ -291,13 +302,17 @@ class Person implements Objects {
 				}
 				System.out.println();
 			}
+
+			if (tmp == null) {
+				System.out.println("No person found");
+			}
 		}
 	}
 
-	public static void searchId(String prefix, Connection conn, Reader input) throws IOException, ExitException, MenuException, SQLException, TooManyTriesException {
-		prefix += "where person.id = ?";
+	public static void searchId(Connection conn, Reader input) throws IOException, ExitException, MenuException, SQLException, TooManyTriesException {
+		String stmt = sqlPrefix + "where person.id = ?";
 		try (
-			PreparedStatement searchName = conn.prepareStatement(prefix);
+			PreparedStatement searchName = conn.prepareStatement(stmt);
 		) {
 			int id = input.getMenuInt("Person ID: ");
 			searchName.setInt(1, id);

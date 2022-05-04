@@ -47,7 +47,7 @@ CREATE TABLE pay_card (
 	first_name VARCHAR2(255) NOT NULL,
 	last_name VARCHAR2(255) NOT NULL,
 	card_num CHAR(19) NOT NULL
-		CHECK (REGEXP_LIKE(card_num, '\d{19}')),
+		CHECK (REGEXP_LIKE(card_num, '\d{16}')),
 	exp_date CHAR(7) NOT NULL
 		CHECK (exp_date LIKE '__/____'),
 	cvv CHAR(3) NOT NULL

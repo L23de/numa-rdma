@@ -1,10 +1,25 @@
-CREATE OR REPLACE PROCEDURE add_venmo (
-		person_id payment_method.person_id%type,
-		handle venmo.handle%type
-	) IS
-		venmo_id payment_method.venmo_id%type;
-	BEGIN
-		INSERT INTO venmo(handle) VALUES(handle);
-		SELECT MAX(id) into venmo_id from venmo;
-		INSERT INTO payment_method(person_id, card_id, venmo_id, ach_id) VALU ES(person_id, NULL, venmo_id, NULL);
-	END;
+create or replace PROCEDURE make_payment (
+	amen_id IN amenity_payment.amenity_id%type,
+	lease_id IN lease_payment.lease_id%type,
+	pay_method IN payment_method.id%type,
+	pay_amt IN amenity_payment.pay_amt%type,
+	payer IN person.id%type,
+	memo IN amenity_payment.memo%type,
+	ret OUT NUMBER
+)
+IS
+BEGIN
+	IF amen_id <> -1 THEN
+		INSERT INTO amenity_payment(amenity_id, date_paid, pay_method_id, pay_amt, payer, memo)
+		VALUES(amen_id, CURRENT_TIMESTAMP, pay_method, pay_amt, payer, memo);
+		ret := 0;
+	ELSIF lease_id <> -1 THEN
+		INSERT INTO lease_payment(lease_id, date_paid, pay_method_id, pay_amt, payer, memo)
+		VALUES(lease_id, CURRENT_TIMESTAMP, pay_method, pay_amt, payer, memo);
+		ret := 0;
+	ELSE
+		ret := 1;
+	END IF;
+END;
+
+

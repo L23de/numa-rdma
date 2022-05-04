@@ -1,7 +1,6 @@
 package numa.Portals;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,11 +10,8 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 
-import javax.naming.spi.DirStateFactory.Result;
-
 import numa.Reader;
 import numa.Exceptions.*;
-
 
 public class ManagementPortal extends Portal {
 	final String BOLD_ON = "\033[1m";
@@ -93,7 +89,7 @@ public class ManagementPortal extends Portal {
 
 				Property tmp = new Property(id, street, city, state, zip);
 				props.add(tmp);
-				outStr += System.out.format(
+				outStr += String.format(
 					"[%d] %s\n",
 					++counter, tmp.toString() 
 				);
@@ -126,15 +122,15 @@ public class ManagementPortal extends Portal {
 					ResultSet aptRes = getApts.executeQuery();
 					ArrayList<Apartment> aptList = new ArrayList<Apartment>();
 
-					counter = 0;
-
+					
 					System.out.format(
 						"%s%s Apartments:%s\n",
 						BOLD_ON,
 						props.get(counter - 1).toString(),
 						BOLD_OFF
 					);
-
+						
+					counter = 0;
 					while (aptRes.next()) {
 						int prop_id = aptRes.getInt("prop_id");
 						String apt = aptRes.getString("apt");
@@ -212,19 +208,9 @@ public class ManagementPortal extends Portal {
 			if (choice == 1 || choice == 2) break;
 		}
 
-		String sqlPrefix = String.format(
-			"select " +
-			"person.id as id, first_name, last_name, ssn, age, phone_number, email, credit_score, apt " +
-			"from " +
-			"(((person left outer join renter_info on renter_info.person_id = person.id) " + 
-			"natural left outer join person_on_lease) " +
-			"left outer join lease on lease_id = lease.id)" + 
-			"natural left outer join apartment "
-		);
-
 		switch (choice) {
-			case 1: Person.searchName(sqlPrefix, conn, input, true); break;
-			case 2: Person.searchId(sqlPrefix, conn, input); break;
+			case 1: Person.searchName(conn, input, true); break;
+			case 2: Person.searchId(conn, input); break;
 
 		}
 	}

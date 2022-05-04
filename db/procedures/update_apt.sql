@@ -1,7 +1,4 @@
--- Used to update an apartment's specs (Maybe due to renovation or rent hike)
--- Make sure that the apartment is out of lease
-
-CREATE OR REPLACE PROCEDURE update_apt (
+create or replace PROCEDURE update_apt (
 	propId IN apartment.prop_id%type,
 	apt IN apartment.apt%type,
 	sqFeet IN apartment.square_footage%type,
@@ -19,12 +16,12 @@ BEGIN
 	WHERE 
 		prop_id = propId AND apt = apt AND
 		ADD_MONTHS(start_date, term_length) < CURRENT_TIMESTAMP;
-	
+
 	IF amt <> 0 THEN
 		success := -1;
 		return;
 	END IF;
-	
+
 	UPDATE apartment
 	SET 
 		square_footage = sqFeet,
@@ -35,3 +32,5 @@ BEGIN
 
 	success := 0;
 END;
+
+

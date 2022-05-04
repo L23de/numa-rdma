@@ -305,7 +305,7 @@ public class ResidentPortal extends Portal {
 				System.out.println(outStr);
 			}
 
-			String in = input.getPrompt("Payments are made in full. For multiple payments, separate numbers with commas\nPay for: ");
+			String in = input.getPrompt("Payments are made in full. Pay for: ");
 			String[] choices = in.split(",");
 			ArrayList<String> errors = new ArrayList<String>();
 
