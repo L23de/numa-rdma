@@ -51,6 +51,8 @@ The following schemas were generated using the aid of [Mockaroo](https://www.moc
 
 Below is some pre-populated data that can be used for testing purposes
 
+Manager PIN: 1337
+
 Properties:
 
 ![Properties Data](images/property.png)
