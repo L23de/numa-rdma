@@ -1,5 +1,7 @@
 # CSE 241 - Database Systems & Applications
 
+> NOTE: While this class is offered at least once every year, the project description constantly changes. So, this Spring 2022 schema will not be applicable for any past or future semesters
+
 Semester-long project for Lehigh's Spring 2022 CSE 241 course. The goal is to
 design a robust database along with separate interfaces for different access
 levels at a fictional company, Northside Uncommons Management of Apartments (NUMA).
@@ -80,7 +82,7 @@ Leases:
 
 ![Lease Data](images/lease.png)
 
-> Note: Not all mock data scripts have been updated. Some of the data values were manually converted to use PL/SQL Procedures/Functions that were implemented later on
+> Note: Mock data scripts do not work automatically, some of the data values were manually converted to work with PL/SQL procedures/functions
 
 ## Functions
 
